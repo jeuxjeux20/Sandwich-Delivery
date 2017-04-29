@@ -1,11 +1,20 @@
 # Compiled source #
 ###################
+packages/
 *.com
 *.class
 *.dll
 *.exe
 *.o
 *.so
+*.pdb
+*.vshost
+*.manifest
+*.vshost.exe.manifest
+*.exe.manifest
+*.cache
+*.txt
+
 
 # Packages #
 ############

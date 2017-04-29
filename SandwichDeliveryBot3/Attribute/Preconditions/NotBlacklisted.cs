@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using Discord.WebSocket;
 using Dopost.SandwichService;
+using System.Collections.Generic;
 
 namespace NotBlacklistedPreCon
 {
@@ -15,12 +16,15 @@ namespace NotBlacklistedPreCon
             if (user == null)
                 return Task.FromResult(PreconditionResult.FromError("The command was not used in a guild."));
 
-            SandwichService SandwichService = map.Get<SandwichService>();
+            // due to an issue we're statically accessing the blacklist
+            //SandwichService SandwichService = map.Get<SandwichService>();
+            Console.WriteLine(SandwichService.blacklisted.Count);
+            var blacklisted = SandwichService.blacklisted;
 
-            if(SandwichService.blacklisted.Contains(context.User.Id))
+            if (blacklisted.Contains(context.User.Id))
                 return Task.FromResult(PreconditionResult.FromError("Your account is blacklisted from using this bot. Please note this is **not** a server blacklist."));
 
-            if (SandwichService.blacklisted.Contains(context.Guild.Id))
+            if (blacklisted.Contains(context.Guild.Id))
                 return Task.FromResult(PreconditionResult.FromError("This server is blacklisted from using this bot."));
 
             return Task.FromResult(PreconditionResult.FromSuccess());
