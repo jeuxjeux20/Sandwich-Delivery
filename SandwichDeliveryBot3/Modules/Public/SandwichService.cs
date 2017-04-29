@@ -15,7 +15,7 @@ namespace Dopost.SandwichService
         public Dictionary<int, Sandwich> activeOrders = new Dictionary<int, Sandwich>();
         public Dictionary<ulong, int> hasAnOrder = new Dictionary<ulong, int>();
         public Dictionary<string, Chef> chefList = new Dictionary<string, Chef>();
-        public List<ulong> blacklisted = new List<ulong>();
+        public static List<ulong> blacklisted = new List<ulong>();
         public List<ulong> givenFeedback = new List<ulong>();
         public List<int> toBeDelivered = new List<int>();
         public List<Sandwich> cache = new List<Sandwich>();
