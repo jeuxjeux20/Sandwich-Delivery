@@ -20,6 +20,8 @@
 *.tar
 *.zip
 *.xml
+*.config
+
 
 
 # Logs and databases #

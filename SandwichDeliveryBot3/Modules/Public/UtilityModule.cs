@@ -8,11 +8,13 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using SandwichBot.SandwichBase;
 using Dopost.SandwichService;
+using System.Collections.Generic;
 
 namespace UtilityModuleNameSpace
 {
     public class UtiltyModule : ModuleBase
     {
+        List<ulong> blacklisted = SandwichService.blacklisted;
         SandwichService SS;
         public UtiltyModule(SandwichService s)
         {
@@ -46,12 +48,12 @@ namespace UtilityModuleNameSpace
                 $"- Library: Discord.Net ({DiscordConfig.Version})\n" +
                 $"- Runtime: {RuntimeInformation.FrameworkDescription} {RuntimeInformation.OSArchitecture}\n" +
                 $"- Uptime: {GetUptime()}\n\n" +
-                $"- Current Order Count: {SS.activeOrders.Count}\n"+
+                $"- Current Order Count: {SS.activeOrders.Count}\n" +
                 $"- ToBeDelivered Count: {SS.toBeDelivered.Count}\n" +
                 $"- HasAnOrder Count: {SS.hasAnOrder.Count}\n" +
                 $"- GivenFeedback Count: {SS.givenFeedback.Count}\n" +
                 $"- ChefList Count: {SS.chefList.Count}\n" +
-                $"- Blacklisted Count: {SS.blacklisted}\n" +
+                $"- Blacklisted Count: {blacklisted}\n" +
                 $"- Cache Count: {SS.cache}\n" +
                 $"- Total Order Count: {SS.totalOrders}\n" +
                 $"- Bot Version: {SS.version}\n" +

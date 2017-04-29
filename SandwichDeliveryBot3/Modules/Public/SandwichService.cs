@@ -15,14 +15,14 @@ namespace Dopost.SandwichService
         public Dictionary<int, Sandwich> activeOrders = new Dictionary<int, Sandwich>();
         public Dictionary<ulong, int> hasAnOrder = new Dictionary<ulong, int>();
         public Dictionary<string, Chef> chefList = new Dictionary<string, Chef>();
-        public List<ulong> blacklisted = new List<ulong>();
+        public static List<ulong> blacklisted = new List<ulong>();
         public List<ulong> givenFeedback = new List<ulong>();
         public List<int> toBeDelivered = new List<int>();
         public List<Sandwich> cache = new List<Sandwich>();
         public int totalOrders = 0;
-        public string version = "2.1";
-        public string date = "April 27th 2017, 6:15pm CST";
-        public string updatename = "I am under the impression I have fixed people losing the ability to order, with the bot claiming they have an order already made. \n Switched a bunch of things to use Preconditional attributes instead of their previous system. Minor bug fixes";
+        public string version = "2.1.1";
+        public string date = "April 29th 2017, 3:45pm CST";
+        public string updatename = "Large thank you to JeuxJeux20 and LewisTehMinerz for helping me get blacklist to worth. Moved blacklist list<ulong> to be static. Awful I know. I'm sorry flam.";
         public string motd;
         public ulong usrID = 264222431172886529;    //264222431172886529  297910882976006154
         public ulong usrcID = 285529162511286282;   //285529162511286282 298552977504075777
@@ -113,7 +113,7 @@ namespace Dopost.SandwichService
                 using (var sr = new StreamReader(@"data/chef.json"))
                 {
                     var myLovelyReader = new JsonTextReader(sr);
-                    chefList = JsonSerializer.Create().Deserialize<Dictionary<string,Chef>>(myLovelyReader);
+                    chefList = JsonSerializer.Create().Deserialize<Dictionary<string, Chef>>(myLovelyReader);
                     Console.WriteLine("Deserialized chef.");
                     Console.WriteLine(chefList.Count());
                 }
@@ -131,5 +131,5 @@ namespace Dopost.SandwichService
             }
         }
     }
-   
+
 }

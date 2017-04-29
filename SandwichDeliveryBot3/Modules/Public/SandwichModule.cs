@@ -12,6 +12,7 @@ using RequireSandwichArtistPrecon;
 using RequireBlacklistPrecon;
 using inUSRPrecon;
 using NotBlacklistedPreCon;
+using System.Collections.Generic;
 
 namespace SandwichDeliveryBot3.Modules.Public
 {
@@ -36,7 +37,7 @@ namespace SandwichDeliveryBot3.Modules.Public
         [RequireSandwichArtist]
         public async Task GetAllOrders()
         {
-         
+
             var s = string.Join("` \r\n `", SS.activeOrders.Keys);
             await ReplyAsync($"`{s}`");
         }
@@ -48,7 +49,7 @@ namespace SandwichDeliveryBot3.Modules.Public
         [RequireSandwichArtist]
         public async Task OrderInfo(int id)
         {
-            
+
 
             if (SS.activeOrders.FirstOrDefault(s => s.Value.Id == id).Value != null)
             {
@@ -258,8 +259,8 @@ namespace SandwichDeliveryBot3.Modules.Public
             }
 
         }
-            
-        
+
+
 
         [Command("deliver")]
         [Alias("d")]
@@ -341,7 +342,7 @@ namespace SandwichDeliveryBot3.Modules.Public
             }
 
         }
-        
+
 
         [Command("denyorder")]
         [Alias("do")]
@@ -416,7 +417,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                 await ReplyAsync("This order does not exist!"); return;
             }
         }
-        
+
 
         [Command("delorder")]
         [Alias("delo")]
@@ -513,7 +514,8 @@ namespace SandwichDeliveryBot3.Modules.Public
         [NotBlacklisted]
         public async Task servercom()
         {
-            if (SS.blacklisted.Contains(Context.User.Id) || SS.blacklisted.Contains(Context.Guild.Id)) { await Context.Channel.SendMessageAsync("You have been blacklisted from this bot. :cry: "); return; }
+            var blacklisted = SandwichService.blacklisted;
+            if (blacklisted.Contains(Context.User.Id) || blacklisted.Contains(Context.Guild.Id)) { await Context.Channel.SendMessageAsync("You have been blacklisted from this bot. :cry: "); return; }
             await ReplyAsync("Come join our server! Feel free to shitpost, spam and do whatever! https://discord.gg/XgeZfE2");
         }
 
@@ -523,7 +525,7 @@ namespace SandwichDeliveryBot3.Modules.Public
         {
             await ReplyAsync(SS.motd);
         }
-
+        List<ulong> blacklisted = SandwichService.blacklisted;
         [Command("blacklist")]
         [Alias("b")]
         [inUSR]
@@ -535,7 +537,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                 Chef s = SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value;
                 if (s.canBlacklist)
                 {
-                    SS.blacklisted.Add(id);
+                    SandwichService.blacklisted.Add(id);
                     await ReplyAsync("Successfully blacklisted! :thumbsup: ");
                     IGuild usr = await Context.Client.GetGuildAsync(SS.usrID);
                     ITextChannel usrc = await usr.GetTextChannelAsync(SS.usrlogcID);
@@ -564,7 +566,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                 Chef s = SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value;
                 if (s.canBlacklist)
                 {
-                    SS.blacklisted.Add(user.Id);
+                    SandwichService.blacklisted.Add(user.Id);
                     await ReplyAsync("Successfully blacklisted! :thumbsup: ");
                     IGuild usr = await Context.Client.GetGuildAsync(SS.usrID);
                     ITextChannel usrc = await usr.GetTextChannelAsync(306909741622362112);
@@ -593,7 +595,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                 Chef s = SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value;
                 if (s.canBlacklist)
                 {
-                    SS.blacklisted.Remove(id);
+                    SandwichService.blacklisted.Remove(id);
                     await ReplyAsync("Removed! :thumbsup: ");
                     SS.Save();
                 }
@@ -617,7 +619,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                 Chef s = SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value;
                 if (s.canBlacklist)
                 {
-                    SS.blacklisted.Remove(user.Id);
+                    SandwichService.blacklisted.Remove(user.Id);
                     await ReplyAsync("Removed! :thumbsup: ");
                     SS.Save();
                 }
@@ -651,29 +653,29 @@ namespace SandwichDeliveryBot3.Modules.Public
         public async Task Help()
         {
             await ReplyAsync(@"**__COMMANDS__**
-»order
-    ; order medium blt with extra lettuce
-    Orders something!
-»feedback
-    ; feedback I didnt get as much extra lettuce as I would have liked, but it was enough. Thanks!
-     ; feedback I didn't get anything close to my order! WTF
-    Sends feedback back to our server, It it highly reccomended to include the name of your delivery man / women, but please do NOT @ THEM IN THE FEEDBACK
-»motd
-    ; motd
-     Send message that is sent when the bot first 
-»total orders
-    ; totalorders
-     Returns the amount of orders we have done!
-»credits
-    ; credits
-     Returns the credits
-»help
-    ; help
-     THIS
-»server
-    ; server
-     Gets our server!
- ");
+        »order
+            ; order medium blt with extra lettuce
+            Orders something!
+        »feedback
+            ; feedback I didnt get as much extra lettuce as I would have liked, but it was enough. Thanks!
+             ; feedback I didn't get anything close to my order! WTF
+            Sends feedback back to our server, It it highly reccomended to include the name of your delivery man / women, but please do NOT @ THEM IN THE FEEDBACK
+        »motd
+            ; motd
+             Send message that is sent when the bot first 
+        »total orders
+            ; totalorders
+             Returns the amount of orders we have done!
+        »credits
+            ; credits
+             Returns the credits
+        »help
+            ; help
+             THIS
+        »server
+            ; server
+             Gets our server!
+         ");
 
         }
 
