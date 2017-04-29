@@ -15,12 +15,14 @@ namespace NotBlacklistedPreCon
             if (user == null)
                 return Task.FromResult(PreconditionResult.FromError("The command was not used in a guild."));
 
-            SandwichService SandwichService = map.Get<SandwichService>();
+            // due to an issue we're statically accessing the blacklist
+            //SandwichService SandwichService = map.Get<SandwichService>();
+            List<ulong> blacklisted = SandsichService.blacklisted;
 
-            if(SandwichService.blacklisted.Contains(context.User.Id))
+            if(blacklisted.Contains(context.User.Id))
                 return Task.FromResult(PreconditionResult.FromError("Your account is blacklisted from using this bot. Please note this is **not** a server blacklist."));
 
-            if (SandwichService.blacklisted.Contains(context.Guild.Id))
+            if (blacklisted.Contains(context.Guild.Id))
                 return Task.FromResult(PreconditionResult.FromError("This server is blacklisted from using this bot."));
 
             return Task.FromResult(PreconditionResult.FromSuccess());
