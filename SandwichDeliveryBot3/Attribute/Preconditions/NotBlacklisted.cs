@@ -18,10 +18,11 @@ namespace NotBlacklistedPreCon
 
             // due to an issue we're statically accessing the blacklist
             //SandwichService SandwichService = map.Get<SandwichService>();
+
             Console.WriteLine(SandwichService.blacklisted.Count);
             var blacklisted = SandwichService.blacklisted;
 
-            if (blacklisted.Contains(context.User.Id))
+            if(blacklisted.Contains(context.User.Id))
                 return Task.FromResult(PreconditionResult.FromError("Your account is blacklisted from using this bot. Please note this is **not** a server blacklist."));
 
             if (blacklisted.Contains(context.Guild.Id))
