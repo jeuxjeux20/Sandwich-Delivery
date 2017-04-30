@@ -49,3 +49,4 @@ packages/
 ehthumbs.db
 Thumbs.db
 .vs/SandwichDeliveryBot3/v14/.suo
+*.suo

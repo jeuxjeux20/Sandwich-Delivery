@@ -119,6 +119,7 @@ namespace SandwichDeliveryBot3.Modules.Public
 
         [Command("order")]
         [Alias("o")]
+        [NotBlacklisted]
         [Summary("Ogre!")]
         [RequireBotPermission(GuildPermission.CreateInstantInvite)]
         public async Task Order([Remainder]string order)
@@ -569,7 +570,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                     SandwichService.blacklisted.Add(user.Id);
                     await ReplyAsync("Successfully blacklisted! :thumbsup: ");
                     IGuild usr = await Context.Client.GetGuildAsync(SS.usrID);
-                    ITextChannel usrc = await usr.GetTextChannelAsync(306909741622362112);
+                    ITextChannel usrc = await usr.GetTextChannelAsync(SS.usrlogid);
                     await usrc.SendMessageAsync($"{Context.User.Mention} blacklisted user {user.Mention}.");
                     SS.Save();
                 }
