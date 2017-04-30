@@ -154,7 +154,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                     SS.activeOrders.Add(i, o);
                     var builder = new EmbedBuilder();
                     builder.ThumbnailUrl = Context.User.GetAvatarUrl();
-                    builder.Title = $"<@&307939487231508481> | New order from {Context.Guild.Name}(`{Context.Guild.Id}`)";
+                    builder.Title = $"@Sandwich Artists | New order from {Context.Guild.Name}(`{Context.Guild.Id}`)";
                     var desc = $"Ordered by: **{Context.User.Username}**#**{Context.User.Discriminator}**(`{Context.User.Id}`)\n" +
                        $"Channel: `{Context.Channel.Name}`\n" +
                        $"Id: `{i}`\n" +
