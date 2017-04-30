@@ -302,6 +302,10 @@ namespace SandwichDeliveryBot3.Modules.Public
                         Sandwich order = SS.activeOrders.FirstOrDefault(s => s.Value.Id == id).Value;
                         if (order.Status == OrderStatus.ReadyToDeliver)
                         {
+                            if (c == null)
+                            {
+                                await ReplyAsync("Order is corrupted... Either means they removed the order at the last minute or something has gone wrong internally! :ghost:");
+                            }
                             try
                             {
                                 Console.WriteLine("passed finish");
