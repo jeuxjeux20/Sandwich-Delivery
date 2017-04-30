@@ -154,7 +154,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                     SS.activeOrders.Add(i, o);
                     var builder = new EmbedBuilder();
                     builder.ThumbnailUrl = Context.User.GetAvatarUrl();
-                    builder.Title = $"New order from {Context.Guild.Name}(`{Context.Guild.Id}`)";
+                    builder.Title = $"<@&307939487231508481> | New order from {Context.Guild.Name}(`{Context.Guild.Id}`)";
                     var desc = $"Ordered by: **{Context.User.Username}**#**{Context.User.Discriminator}**(`{Context.User.Id}`)\n" +
                        $"Channel: `{Context.Channel.Name}`\n" +
                        $"Id: `{i}`\n" +
@@ -669,7 +669,7 @@ namespace SandwichDeliveryBot3.Modules.Public
         [NotBlacklisted]
         public async Task credits()
         {
-            await ReplyAsync($"Special thanks to ``` \r\n Melon - no, you suck \r\n JeuxJeux20 - Json help, bot wouldn't exist without you.  \r\n LewisTehMinerz - (fires insert something here thanks - lewis) \r\n Bloxri - Assorted C# knowledge \r\n Discord Pizza - Inspiration \r\n Discord Api DiscordNet Channel Members - Helped me get Discord.Net 1.0 set up and working, Love you flam: kissing_heart: ```");
+            await ReplyAsync($"Special thanks to ``` \r\n Melon - no, you suck \r\n JeuxJeux20 - Json help, bot wouldn't exist without you.  \r\n LewisTehMinerz - Made Fires not be lonely in the project, and has done stuff for him. \r\n Bloxri - Assorted C# knowledge \r\n Discord Pizza - Inspiration \r\n Discord Api DiscordNet Channel Members - Helped me get Discord.Net 1.0 set up and working, Love you flam: kissing_heart: ```");
         }
 
         [Command("help")]
