@@ -256,7 +256,8 @@ namespace SandwichDeliveryBot3.Modules.Public
                         }
                         catch (NullReferenceException)
                         {
-                            await ReplyAsync("Null ref. Did they kick our bot or delete the channel? Try to add the user and ask.");
+                            // just silently fail for now, it's handled later.
+                            //await ReplyAsync("Null ref. Did they kick our bot or delete the channel? Try to add the user and ask.");
                             //delete it too???
                         }
                         catch (Exception e)
@@ -339,8 +340,13 @@ namespace SandwichDeliveryBot3.Modules.Public
                             }
                             catch (Exception ex)
                             {
-                                await ReplyAsync(":ghost:");
-                                await ReplyAsync($"```{ex}```"); return;
+                                if (ex.InnerException is NullReferenceException)
+                                {
+                                    await ReplyAsync("Order is corrupt. This usually means that the bot was removed or the channel was removed.");
+                                } else {
+                                    await ReplyAsync(":ghost:");
+                                    await ReplyAsync($"```{ex}```"); return;
+                                }
                             }
                         }
                         else
