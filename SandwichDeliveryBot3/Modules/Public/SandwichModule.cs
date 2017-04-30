@@ -134,7 +134,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                 {
                     IGuild usr = await Context.Client.GetGuildAsync(SS.usrID);
                     ITextChannel usrc = await usr.GetTextChannelAsync(SS.usrcID);
-                    ITextChannel usrclog = await usr.GetTextChannelAsync(287990510428225537);
+                    ITextChannel usrclog = await usr.GetTextChannelAsync(SS.usrlogcID);
 
                     var r = new Random();
                     i = r.Next(1, 999);
@@ -171,6 +171,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                     SS.hasAnOrder.Add(Context.User.Id, i);
                     SS.totalOrders += 1;
                     await usrc.SendMessageAsync("", embed: builder);
+                    
 
 
                 }
@@ -180,8 +181,28 @@ namespace SandwichDeliveryBot3.Modules.Public
                     await ReplyAsync($"```{e}```");
                     return;
                 }
+                IDMChannel dm = await Context.User.CreateDMChannelAsync();
+                IUserMessage m = await ReplyAsync(":thumbsup:");
+                try
+                {
+                    await dm.SendMessageAsync($"Your order has been delivered! Thank you for ordering! Please wait while someone accepts your order. :slight_smile: - ID `{i}`");
+                }
+                catch (Exception e)
+                {
+                    await m.ModifyAsync(msg =>
+                    {
+                        msg.Content = $":thumbsdown: {Context.User.Mention} We failed to dm you. You're order has been automatically deleted. Please enable DMs and re order. http://i.imgur.com/vY7tThf.png OR http://i.imgur.com/EtaA78Q.png";
+                    });
+                    SS.totalOrders -= 1;
+                    SS.hasAnOrder.Remove(Context.User.Id);
+                    SS.activeOrders.Remove(i);
+                    IGuild usr = await Context.Client.GetGuildAsync(SS.usrID);
+                    ITextChannel usrc = await usr.GetTextChannelAsync(SS.usrcID);
+                    ITextChannel usrclog = await usr.GetTextChannelAsync(SS.usrlogcID);
+                    await usrc.SendMessageAsync($"**IGNORE ORDER {i} AS IT HAS BEEN REMOVED**");
+                    await usrclog.SendMessageAsync($"Order {i} has been removed due to the customer having their dms closed.");
+                }
 
-                await ReplyAsync($"Your order has been delivered! Thank you for ordering! Please wait while someone accepts your order. :slight_smile: - ID `{i}`");
                 SS.Save();
             }
             else { await ReplyAsync("You need to specify what you want idiot! :confused:"); }
@@ -430,6 +451,8 @@ namespace SandwichDeliveryBot3.Modules.Public
                 Sandwich order = SS.activeOrders.First(s => s.Value.UserId == Context.User.Id).Value;
                 IUserMessage msg = await ReplyAsync("Deleting order...");
                 SS.activeOrders.Remove(order.Id);
+                SS.totalOrders -= 1;
+                SS.hasAnOrder.Remove(order.UserId);
                 IGuild usr = await Context.Client.GetGuildAsync(SS.usrID);
                 ITextChannel usrc = await usr.GetTextChannelAsync(SS.usrcID);
                 await usrc.SendMessageAsync($"Order `{order.Id}`,`{order.Desc}` has been **REMOVED**.");
