@@ -45,8 +45,19 @@ namespace DiscordExampleBot
             // Console.WriteLine("beep boop handled4");
             // If the command failed, notify the user
 
-            if (!result.IsSuccess)
-                await message.Channel.SendMessageAsync($"**Error:** {result.ErrorReason}");
+           // if (!result.IsSuccess)
+               // await message.Channel.SendMessageAsync($"**Error:** {result.ErrorReason}");
+            if(!result.IsSuccess)
+            {
+               if(result.ErrorReason == "Unknown Command.")
+               {
+                  return;
+               }
+               else
+               {
+                    await message.Channel.SendMessageAsync($"**Error:** {result.ErrorReason}");
+               }
+            }
 
             // Console.WriteLine("beep boop made it through");
         }
