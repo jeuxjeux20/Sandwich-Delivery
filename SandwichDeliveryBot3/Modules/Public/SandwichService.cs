@@ -20,9 +20,9 @@ namespace Dopost.SandwichService
         public List<int> toBeDelivered = new List<int>();
         public List<Sandwich> cache = new List<Sandwich>();
         public int totalOrders = 0;
-        public string version = "2.1.1";
-        public string date = "April 29th 2017, 3:45pm CST";
-        public string updatename = "Large thank you to JeuxJeux20 and LewisTehMinerz for helping me get blacklist to worth. Moved blacklist list<ulong> to be static. Awful I know. I'm sorry flam.";
+        public string version = "2.1.2";
+        public string date = "April 30th 2017, 11:35am CST";
+        public string updatename = "Fixed unknown command spam, fixed blacklistuser log channel";
         public string motd;
         public ulong usrID = 264222431172886529;    //264222431172886529  297910882976006154
         public ulong usrcID = 285529162511286282;   //285529162511286282 298552977504075777
