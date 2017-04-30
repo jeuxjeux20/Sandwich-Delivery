@@ -22,7 +22,7 @@ namespace Dopost.SandwichService
         public int totalOrders = 0;
         public string version = "2.2";
         public string date = "April 30th 2017, 12:15am CST";
-        public string updatename = ";delorder now ACTUALYL deletes the order. Fully. No more problems. Added a check for the 5001(or 50001 idk) error that occurs when a customer cannot be dmed. Thanks to Lewis for helping out set up a few things and also talking about anime desktop backgrounds while we worked. UPDATE TIME";
+        public string updatename = ";delorder now ACTUALLY deletes the order. Fully. No more problems. Added a check for the 5001(or 50001 idk) error that occurs when a customer cannot be dmed. Thanks to Lewis for helping out set up a few things and also talking about anime desktop backgrounds while we worked. UPDATE TIME";
         public string motd;
         public ulong usrID = 264222431172886529;    //264222431172886529  297910882976006154
         public ulong usrcID = 285529162511286282;   //285529162511286282 298552977504075777

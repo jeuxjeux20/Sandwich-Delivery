@@ -669,7 +669,7 @@ namespace SandwichDeliveryBot3.Modules.Public
         [NotBlacklisted]
         public async Task credits()
         {
-            await ReplyAsync($"Special thanks to ``` \r\n Lemon - Extremely helpful and efficient worker, helped establish a lot of the bot \r\n Melon - no, you suck \r\n JeuxJeux20 - Json help, bot wouldn't exist without you. \r\n Bloxri - Assorted C# knowledge \r\n Discord Pizza - Inspiration \r\n Discord Api DiscordNet Channel Members - Helped me get Discord.Net 1.0 set up and working, Love you flam: kissing_heart: ```");
+            await ReplyAsync($"Special thanks to ``` \r\n Melon - no, you suck \r\n JeuxJeux20 - Json help, bot wouldn't exist without you.  \r\n LewisTehMinerz - (fires insert something here thanks - lewis) \r\n Bloxri - Assorted C# knowledge \r\n Discord Pizza - Inspiration \r\n Discord Api DiscordNet Channel Members - Helped me get Discord.Net 1.0 set up and working, Love you flam: kissing_heart: ```");
         }
 
         [Command("help")]
@@ -683,7 +683,7 @@ namespace SandwichDeliveryBot3.Modules.Public
         »feedback
             ; feedback I didnt get as much extra lettuce as I would have liked, but it was enough. Thanks!
              ; feedback I didn't get anything close to my order! WTF
-            Sends feedback back to our server, It it highly reccomended to include the name of your delivery man / women, but please do NOT @ THEM IN THE FEEDBACK
+            Sends feedback back to our server, It it highly recommended to include the name of your delivery man / woman, but please do NOT @ THEM IN THE FEEDBACK
         »motd
             ; motd
              Send message that is sent when the bot first 

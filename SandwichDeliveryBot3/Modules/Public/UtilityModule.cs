@@ -53,8 +53,8 @@ namespace UtilityModuleNameSpace
                 $"- HasAnOrder Count: {SS.hasAnOrder.Count}\n" +
                 $"- GivenFeedback Count: {SS.givenFeedback.Count}\n" +
                 $"- ChefList Count: {SS.chefList.Count}\n" +
-                $"- Blacklisted Count: {blacklisted}\n" +
-                $"- Cache Count: {SS.cache}\n" +
+                $"- Blacklisted Count: {blacklisted.Count}\n" +
+                $"- Cache Count: {SS.cache.Count}\n" +
                 $"- Total Order Count: {SS.totalOrders}\n" +
                 $"- Bot Version: {SS.version}\n" +
                 $"- Update: {SS.updatename}\n\n" +

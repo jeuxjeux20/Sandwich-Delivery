@@ -17,7 +17,7 @@ namespace SandwichBot.SandwichBase
     public class Sandwich
     {
         public int Id { get; set; }
-        public string Desc { get; set; } //your oder
+        public string Desc { get; set; } //your order
         public DateTime date { get; set; }
         public OrderStatus Status { get; set; }
         public Chef OrderChef { get; set; }
