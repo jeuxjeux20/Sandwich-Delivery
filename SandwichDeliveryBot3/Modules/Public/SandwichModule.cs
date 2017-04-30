@@ -570,7 +570,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                     SandwichService.blacklisted.Add(user.Id);
                     await ReplyAsync("Successfully blacklisted! :thumbsup: ");
                     IGuild usr = await Context.Client.GetGuildAsync(SS.usrID);
-                    ITextChannel usrc = await usr.GetTextChannelAsync(SS.usrlogid);
+                    ITextChannel usrc = await usr.GetTextChannelAsync(SS.usrlogcID);
                     await usrc.SendMessageAsync($"{Context.User.Mention} blacklisted user {user.Mention}.");
                     SS.Save();
                 }
