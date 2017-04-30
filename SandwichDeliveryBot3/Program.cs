@@ -27,11 +27,8 @@ namespace DiscordExampleBot
             // Define the DiscordSocketClient
             client = new DiscordSocketClient();
 
-<<<<<<< HEAD
+
             var token = "no"; 
-=======
-            var token = "Mshitlol"
->>>>>>> origin/master
 
             client.Log += async (message) =>
             {
