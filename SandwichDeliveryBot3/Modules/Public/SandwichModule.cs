@@ -119,9 +119,9 @@ namespace SandwichDeliveryBot3.Modules.Public
 
         [Command("order")]
         [Alias("o")]
+        [NotBlacklisted]
         [Summary("Ogre!")]
         [RequireBotPermission(GuildPermission.CreateInstantInvite)]
-        [NotBlacklisted]
         public async Task Order([Remainder]string order)
         {
             if (order != null)
