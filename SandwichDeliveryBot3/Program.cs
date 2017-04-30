@@ -7,7 +7,7 @@ using Dopost.SandwichService;
 using System.Linq;
 using OrderStatusEnums;
 
-namespace DiscordExampleBot
+namespace SandwichDeliveryBot
 {
     public class Program
     {

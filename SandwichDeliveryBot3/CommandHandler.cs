@@ -5,7 +5,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Dopost.SandwichService;
 
-namespace DiscordExampleBot
+namespace SandwichDeliveryBot
 {
     public class CommandHandler
     {
