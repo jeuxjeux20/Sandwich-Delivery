@@ -254,11 +254,12 @@ namespace SandwichDeliveryBot3.Modules.Public
                             await dm.SendMessageAsync("", embed: builder);
                             SS.Save();
                         }
-                        catch (NullReferenceException)
+                        catch (NullReferenceException e)
                         {
                             // just silently fail for now, it's handled later.
                             //await ReplyAsync("Null ref. Did they kick our bot or delete the channel? Try to add the user and ask.");
                             //delete it too???
+                            Console.WriteLine(e); //Better idea.
                         }
                         catch (Exception e)
                         {
