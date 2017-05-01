@@ -52,3 +52,6 @@ Thumbs.db
 *.suo
 SandwichDeliveryBot3/Program.cs
 SandwichDeliveryBot3/Program.cs
+.vs/SandwichDeliveryBot3/v14/.suo
+SandwichDeliveryBot3/CommandHandler.cs
+SandwichDeliveryBot3/Program.cs
