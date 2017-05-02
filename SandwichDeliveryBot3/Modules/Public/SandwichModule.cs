@@ -362,14 +362,9 @@ namespace SandwichDeliveryBot3.Modules.Public
                 }
                 else
                 {
-                    await ReplyAsync("You are not high enough rank to deliver orders!"); return;
+                    await ReplyAsync("This order is not ready to be delivered yet! (this error can also occur if you are not using the right id)"); return;
                 }
             }
-            else
-            {
-                await ReplyAsync("This order is not ready to be delivered yet! (this error can also occur if you are not using the right id)"); return;
-            }
-
         }
 
 
