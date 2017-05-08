@@ -5,7 +5,9 @@ using SandwichBot.SandwichBase;
 using Newtonsoft.Json;
 using System.IO;
 using Discord;
+using Discord.WebSocket;
 using SandwichBot.ChefBase;
+using Discord.Commands;
 using System.Threading.Tasks;
 
 namespace Dopost.SandwichService
@@ -20,14 +22,15 @@ namespace Dopost.SandwichService
         public List<int> toBeDelivered = new List<int>();
         public List<Sandwich> cache = new List<Sandwich>();
         public int totalOrders = 0;
-        public string version = "2.2";
-        public string date = "April 30th 2017, 12:15am CST";
-        public string updatename = ";delorder now ACTUALLY deletes the order. Fully. No more problems. Added a check for the 5001(or 50001 idk) error that occurs when a customer cannot be dmed. Thanks to Lewis for helping out set up a few things and also talking about anime desktop backgrounds while we worked. UPDATE TIME";
+        public string version = "2.3";
+        public string date = "May 8th 2017, 5pm CST";
+        public string updatename = "Added new method to main server called 'LogCommand', logs all activity to our 'commandlog' channel. Minor fixes and changes that can be viewed by the commit history over at the github.";
         public string motd;
         public ulong usrID = 264222431172886529;    //264222431172886529  297910882976006154
         public ulong usrcID = 285529162511286282;   //285529162511286282 298552977504075777
         public ulong usrlogcID = 287990510428225537; //287990510428225537 306909741622362112
 
+       
 
         public void Save()
         {
@@ -69,6 +72,70 @@ namespace Dopost.SandwichService
                 Console.WriteLine("Failed to save!");
                 Console.WriteLine(n);
             }
+        }
+
+        public async void LogCommand(ICommandContext context, string commandname, string[] arguments = null) //Pass all of our variables into the command
+        //example: LogCommand(client, Context.User, Context.Guild, Context.Channel, "Order", new string[]{orderinfo, blah, blah}); should hopefully supply all info needed.
+        {
+            //Grab important channels
+            IGuild usr = await context.Client.GetGuildAsync(usrID);
+            ITextChannel clogchannel = await usr.GetTextChannelAsync(311240926615830529);
+            //Create special variables
+            arguments = arguments ?? new string[] { "None given." };
+            var fullname = string.Format("{0}#{1}({2})", context.User.Username, context.User.Discriminator, context.User.Id);
+            var fullservername = string.Format("{0}({1})",context.Guild.Name, context.Guild.Id);
+            var fullchannelname = string.Format("{0}({1})", context.Channel.Name, context.Channel.Id);
+            var argumentparse = string.Join(" , ", arguments);
+            var c = new Color(255, 169, 33);
+            //Build and send embed
+            await clogchannel.SendMessageAsync("Command Used:", embed: new EmbedBuilder()
+                .AddField(builder =>
+                {
+                    builder.Name = "Command:";
+                    builder.Value = commandname;
+                    builder.IsInline = true;
+                })
+               .AddField(builder =>
+               {
+                   builder.Name = "User:";
+                   builder.Value = fullname;
+                   builder.IsInline = true;
+               })
+               .AddField(builder =>
+               {
+                   builder.Name = "Server:";
+                   builder.Value = context.Guild.Name;
+                   builder.IsInline = true;
+               })
+               .AddField(builder =>
+               {
+                   builder.Name = "Channel:";
+                   builder.Value = fullchannelname;
+                   builder.IsInline = true;
+               })
+               .AddField(builder =>
+               {
+                   builder.Name = "Arguments:";
+                   builder.Value = argumentparse;
+                   builder.IsInline = true;
+               })
+               .AddField(builder =>
+               {
+                   builder.Name = "Date:";
+                   builder.Value = DateTime.Now;
+                   builder.IsInline = true;
+               })
+               .AddField(builder =>
+               {
+                   builder.Name = "Raw Message:";
+                   builder.Value = "```"+context.Message.Content+"```";
+                   builder.IsInline = true;
+               })
+               .WithUrl("https://discord.gg/XgeZfE2")
+               .WithColor(c)
+               .WithThumbnailUrl(context.User.GetAvatarUrl())
+               .WithTitle($"New command used by `{context.User.Username}#{context.User.Discriminator}`, in `#{context.Channel.Name}` at `{context.Guild.Name}`.")
+               .WithTimestamp(DateTime.Now));
         }
 
         public void Load()

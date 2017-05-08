@@ -41,6 +41,7 @@ namespace ChefModule
                         Chef c = new Chef(n, chef.Id, chef.Discriminator, 0, 0, DateTime.Now.ToString("MMMM dd, yyyy"), ChefStatus.Trainee);
                         SS.chefList.Add(n, c);
                         await ReplyAsync($"<@{chef.Id}> had been added as a Trainee Sandwich Artist!");
+                        SS.LogCommand(Context, "Artist Add", new string[] { chef.Username });
                         SS.Save();
                     }
                     else
@@ -72,6 +73,7 @@ namespace ChefModule
                     {
                         SS.chefList.Remove(n);
                         await ReplyAsync($"{n} has been removed!");
+                        SS.LogCommand(Context, "Artist Del", new string[] { chef.Username });
                         SS.Save();
                     }
                 }
@@ -85,6 +87,8 @@ namespace ChefModule
         [Alias("l")]
         public async Task ListChefs()
         {
+            return;
+
             foreach (var obj in SS.chefList)
             {
                 
@@ -153,6 +157,8 @@ namespace ChefModule
                     if (s.canBlacklist)
                     {
                         c.canBlacklist = true;
+                        await ReplyAsync(":thumbsup:");
+                        SS.LogCommand(Context, "Artist Can Blacklist", new string[] { user.Username });
                         SS.Save();
                     }
                 }
@@ -184,17 +190,21 @@ namespace ChefModule
                             case ChefStatus.Trainee:
                                 c.status = ChefStatus.Artist;
                                 await ReplyAsync($"Promoted {chef.Username}#{chef.Discriminator} from Trainee to Sandwich Artist");
+                                SS.LogCommand(Context, "Artist Promote - Trainee to Artist", new string[] { chef.Username });
                                 break;
                             case ChefStatus.Artist:
                                 c.status = ChefStatus.MasterArtist;
                                 await ReplyAsync($"Promoted {chef.Username}#{chef.Discriminator} from Artist to Master Sandwich Artist");
+                                SS.LogCommand(Context, "Artist Promote - Artist to Master", new string[] { chef.Username });
                                 break;
                             case ChefStatus.MasterArtist:
                                 c.status = ChefStatus.GodArtist;
                                 await ReplyAsync($"Promoted {chef.Username}#{chef.Discriminator} from Master Sandwich Artist to **GOD** Sandwich Artist");
+                                SS.LogCommand(Context, "Artist Promote - Master to God", new string[] { chef.Username });
                                 break;
                             case ChefStatus.GodArtist:
                                 await ReplyAsync("You cannot promote a user past God Sandwich Artist!");
+                                SS.LogCommand(Context, "Artist Promote - God error", new string[] { chef.Username });
                                 break;
                         }
                     }
@@ -209,6 +219,7 @@ namespace ChefModule
         public async Task ChefCount()
         {
             await ReplyAsync($"There are currently {SS.chefList.Count} Sandwich Artists in the database.");
+            SS.LogCommand(Context, "Artist Count");
         }
 
         [Command("stats")]
@@ -223,7 +234,7 @@ namespace ChefModule
             {
                 Chef c = SS.chefList.FirstOrDefault(a => a.Value.ChefId == n).Value;
                 await ReplyAsync($"{chef.Mention} has accepted `{c.ordersAccepted}` orders and delivered `{c.ordersDelivered}`. They have been working here since `{c.HiredDate}` and have the `{c.status}` rank. Their blacklist ability is set to {c.canBlacklist}.");
-
+                SS.LogCommand(Context, "Artist Stats", new string[] { chef.Username });
             }
             else
             {
@@ -236,7 +247,8 @@ namespace ChefModule
         public async Task listImproved()
         {
             var s = string.Join("` \r\n `", SS.chefList.Keys);
-            await ReplyAsync(s);
+            await ReplyAsync("`"+s+"`");
+            SS.LogCommand(Context, "Artist List");
         }
 
         [Command("testattribute")]

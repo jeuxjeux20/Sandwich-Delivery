@@ -28,6 +28,7 @@ namespace UtilityModuleNameSpace
             var application = await Context.Client.GetApplicationInfoAsync();
             await ReplyAsync(
                 $"A user with `MANAGE_SERVER` can invite me to your server here: <https://discordapp.com/oauth2/authorize?client_id={application.Id}&scope=bot>");
+            SS.LogCommand(Context, "Invite");
         }
 
         [Command("updateinfo")]
@@ -36,6 +37,7 @@ namespace UtilityModuleNameSpace
             await ReplyAsync(SS.version);
             await ReplyAsync(SS.updatename);
             await ReplyAsync(SS.date);
+            SS.LogCommand(Context, "Update Info");
         }
 
         [Command("info")]
@@ -66,6 +68,7 @@ namespace UtilityModuleNameSpace
                 $"- Channels: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Channels.Count)}" +
                 $"- Users: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Users.Count)}"
             );
+            SS.LogCommand(Context, "Info");
         }
 
         private static string GetUptime()

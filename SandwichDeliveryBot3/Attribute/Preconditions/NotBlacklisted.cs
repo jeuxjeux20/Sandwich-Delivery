@@ -25,6 +25,9 @@ namespace NotBlacklistedPreCon
             if(blacklisted.Contains(context.User.Id))
                 return Task.FromResult(PreconditionResult.FromError("Your account is blacklisted from using this bot. Please note this is **not** a server blacklist."));
 
+            if (blacklisted.Contains(context.Channel.Id))
+                return Task.FromResult(PreconditionResult.FromError("This channel is blacklisted from using this bot. Please note this is **not** a server or a user blacklist."));
+
             if (blacklisted.Contains(context.Guild.Id))
                 return Task.FromResult(PreconditionResult.FromError("This server is blacklisted from using this bot."));
 

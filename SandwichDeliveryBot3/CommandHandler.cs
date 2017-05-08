@@ -13,6 +13,11 @@ namespace SandwichDeliveryBot
         private DiscordSocketClient client;
         private IDependencyMap map;
 
+        SandwichService SS;
+        public CommandHandler(SandwichService s)
+        {
+            SS = s;
+        }
         public async Task Install(IDependencyMap _map)
         {
             // Create Command Service, inject it into Dependency Map

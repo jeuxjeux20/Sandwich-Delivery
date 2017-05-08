@@ -28,6 +28,7 @@ namespace SandwichDeliveryBot3.Modules.Public
         public async Task GetOrderCount()
         {
             await ReplyAsync($"We have served `{SS.totalOrders}`");
+            SS.LogCommand(Context, "Get Order Count");
         }
 
         [Command("getallorders")]
@@ -37,9 +38,9 @@ namespace SandwichDeliveryBot3.Modules.Public
         [RequireSandwichArtist]
         public async Task GetAllOrders()
         {
-
             var s = string.Join("` \r\n `", SS.activeOrders.Keys);
             await ReplyAsync($"`{s}`");
+            SS.LogCommand(Context, "Get All Orders");
         }
 
         [Command("orderinfo")]
@@ -49,8 +50,6 @@ namespace SandwichDeliveryBot3.Modules.Public
         [RequireSandwichArtist]
         public async Task OrderInfo(int id)
         {
-
-
             if (SS.activeOrders.FirstOrDefault(s => s.Value.Id == id).Value != null)
             {
                 Sandwich order = SS.activeOrders.FirstOrDefault(s => s.Value.Id == id).Value;
@@ -111,7 +110,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                 .WithTitle("Order information")
                 .WithTimestamp(DateTime.Now));
 
-
+                SS.LogCommand(Context, "Order Info", new string[] {id.ToString()});
 
                 SS.Save();
             }
@@ -124,6 +123,7 @@ namespace SandwichDeliveryBot3.Modules.Public
         [RequireBotPermission(GuildPermission.CreateInstantInvite)]
         public async Task Order([Remainder]string order)
         {
+            
             if (order != null)
             {
                 var i = 0;
@@ -142,7 +142,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                     while (SS.activeOrders.ContainsKey(i))
                     {
                         i = r.Next(1, 999);
-                        await usrclog.SendMessageAsync($"<@131182268021604352> Rerolled order, matching ids. {i}");
+                        await usrclog.SendMessageAsync($"<@131182268021604352> Rerolled order, matching ids. {i}"); //This line has never been used in the log channel. Sad!
                     }
 
                     var s = Context.Guild;
@@ -171,7 +171,8 @@ namespace SandwichDeliveryBot3.Modules.Public
                     SS.hasAnOrder.Add(Context.User.Id, i);
                     SS.totalOrders += 1;
                     await usrc.SendMessageAsync("", embed: builder);
-                    
+                    SS.LogCommand(Context, "Order", new string[] { order });
+
 
 
                 }
@@ -252,6 +253,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                             SS.toBeDelivered.Add(order.Id);
                             c.ordersAccepted += 1;
                             await dm.SendMessageAsync("", embed: builder);
+                            SS.LogCommand(Context, "Accept Order", new string[] { id.ToString() });
                             SS.Save();
                         }
                         catch (NullReferenceException e)
@@ -329,7 +331,8 @@ namespace SandwichDeliveryBot3.Modules.Public
                                     x.Text = $"Ordered at: {order.date}.";
                                 });
                                 builder.Timestamp = DateTime.UtcNow;
-                                await artistdm.SendMessageAsync(inv.ToString());
+                                await artistdm.SendMessageAsync("Invite:" + inv.ToString());
+                                SS.LogCommand(Context, "Deliver", new string[] { id.ToString() });
                                 SS.cache.Add(order);
                                 order.Status = OrderStatus.Delivered;
                                 SS.toBeDelivered.Remove(order.Id);
@@ -346,6 +349,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                                     await ReplyAsync("Order is corrupt. This usually means that the bot was removed or the channel was removed.");
                                 } else {
                                     await ReplyAsync(":ghost:");
+                                    Console.WriteLine(ex);
                                     await ReplyAsync($"```{ex}```"); return;
                                 }
                             }
@@ -386,6 +390,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                 ITextChannel ch = await s.GetTextChannelAsync(order.ChannelId);
                 IGuildUser u = await s.GetUserAsync(order.UserId);
                 IDMChannel dm = await u.CreateDMChannelAsync();
+                SS.LogCommand(Context, "Deny Order", new string[] { id.ToString() });
                 SS.hasAnOrder.Remove(order.UserId);
                 SS.totalOrders -= 1;
                 await dm.SendMessageAsync($"Your sandwich order has been denied! ", embed: new EmbedBuilder()
@@ -458,6 +463,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                 IGuild usr = await Context.Client.GetGuildAsync(SS.usrID);
                 ITextChannel usrc = await usr.GetTextChannelAsync(SS.usrcID);
                 await usrc.SendMessageAsync($"Order `{order.Id}`,`{order.Desc}` has been **REMOVED**.");
+                SS.LogCommand(Context, "Delete Order");
                 SS.Save();
                 await msg.ModifyAsync(x =>
                 {
@@ -467,6 +473,7 @@ namespace SandwichDeliveryBot3.Modules.Public
             catch (Exception e)
             {
                 await ReplyAsync("Failed to delete. Are you sure you have one?");
+                Console.WriteLine(e);
             }
         }
 
@@ -491,6 +498,7 @@ namespace SandwichDeliveryBot3.Modules.Public
             {
                 await ReplyAsync("You are not a Sandwich Artist!");
             }
+            SS.LogCommand(Context, "Can I blacklist?");
         }
 
         [Command("feedback")]
@@ -522,6 +530,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                     await usrc.SendMessageAsync("", embed: builder);
                     await ReplyAsync("Thank you!");
                     SS.givenFeedback.Add(Context.User.Id);
+                    SS.LogCommand(Context, "Feedback", new string[] { f });
                     SS.Save();
                 }
                 catch (Exception e)
@@ -543,6 +552,7 @@ namespace SandwichDeliveryBot3.Modules.Public
             var blacklisted = SandwichService.blacklisted;
             if (blacklisted.Contains(Context.User.Id) || blacklisted.Contains(Context.Guild.Id)) { await Context.Channel.SendMessageAsync("You have been blacklisted from this bot. :cry: "); return; }
             await ReplyAsync("Come join our server! Feel free to shitpost, spam and do whatever! https://discord.gg/XgeZfE2");
+            SS.LogCommand(Context, "Server");
         }
 
         [Command("motd")]
@@ -550,8 +560,10 @@ namespace SandwichDeliveryBot3.Modules.Public
         public async Task MOTD()
         {
             await ReplyAsync(SS.motd);
+            SS.LogCommand(Context, "MOTD");
         }
-        List<ulong> blacklisted = SandwichService.blacklisted;
+
+        List<ulong> blacklisted = SandwichService.blacklisted; //We need to switch back, fuck static.
         [Command("blacklist")]
         [Alias("b")]
         [inUSR]
@@ -568,6 +580,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                     IGuild usr = await Context.Client.GetGuildAsync(SS.usrID);
                     ITextChannel usrc = await usr.GetTextChannelAsync(SS.usrlogcID);
                     await usrc.SendMessageAsync($"{Context.User.Mention} blacklisted id {id}.");
+                    SS.LogCommand(Context, "Blacklist", new string[] { id.ToString() });
                     SS.Save();
                 }
                 else
@@ -597,6 +610,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                     IGuild usr = await Context.Client.GetGuildAsync(SS.usrID);
                     ITextChannel usrc = await usr.GetTextChannelAsync(SS.usrlogcID);
                     await usrc.SendMessageAsync($"{Context.User.Mention} blacklisted user {user.Mention}.");
+                    SS.LogCommand(Context, "Blacklist User", new string[] { user.Username });
                     SS.Save();
                 }
                 else
@@ -623,6 +637,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                 {
                     SandwichService.blacklisted.Remove(id);
                     await ReplyAsync("Removed! :thumbsup: ");
+                    SS.LogCommand(Context, "Remove From Blacklist", new string[] { id.ToString() });
                     SS.Save();
                 }
                 else
@@ -647,6 +662,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                 {
                     SandwichService.blacklisted.Remove(user.Id);
                     await ReplyAsync("Removed! :thumbsup: ");
+                    SS.LogCommand(Context, "Remove User From Blacklist", new string[] { user.Username });
                     SS.Save();
                 }
                 else
@@ -664,6 +680,7 @@ namespace SandwichDeliveryBot3.Modules.Public
         public async Task TotalOrders()
         {
             await ReplyAsync($"We have proudly served {SS.totalOrders} sandwiches since April 26th 2017, We currently have {SS.cache.Count} saved.");
+            SS.LogCommand(Context, "Total Orders");
         }
 
         [Command("credits")]
@@ -672,6 +689,7 @@ namespace SandwichDeliveryBot3.Modules.Public
         public async Task credits()
         {
             await ReplyAsync($"Special thanks to ``` \r\n Melon - no, you suck \r\n JeuxJeux20 - Json help, bot wouldn't exist without you.  \r\n LewisTehMinerz - Made Fires not be lonely in the project, and has done stuff for him. \r\n Bloxri - Assorted C# knowledge \r\n Discord Pizza - Inspiration \r\n Discord Api DiscordNet Channel Members - Helped me get Discord.Net 1.0 set up and working, Love you flam: kissing_heart: ```");
+            SS.LogCommand(Context, "Credits");
         }
 
         [Command("help")]
@@ -702,7 +720,7 @@ namespace SandwichDeliveryBot3.Modules.Public
             ; server
              Gets our server!
          ");
-
+            SS.LogCommand(Context, "Help");
         }
 
 
