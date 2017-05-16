@@ -27,7 +27,7 @@ namespace UtilityModuleNameSpace
         {
             var application = await Context.Client.GetApplicationInfoAsync();
             await ReplyAsync(
-                $"A user with `MANAGE_SERVER` can invite me to your server here: <https://discordapp.com/oauth2/authorize?client_id={application.Id}&scope=bot>");
+                $"A user with `MANAGE_SERVER` can invite me to your server here: <https://discordapp.com/oauth2/authorize?client_id={application.Id}&scope=bot&permissions=3073>");
         }
 
         [Command("updateinfo")]
