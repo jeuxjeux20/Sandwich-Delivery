@@ -156,7 +156,6 @@ namespace SandwichDeliveryBot3.Modules.Public
                     builder.ThumbnailUrl = Context.User.GetAvatarUrl();
                     builder.Title = $"New order from {Context.Guild.Name}(`{Context.Guild.Id}`)";
                     var desc = 
-                       $"<@&307939487231508481>\n" +
                        $"Ordered by: **{Context.User.Username}**#**{Context.User.Discriminator}**(`{Context.User.Id}`)\n" +
                        $"Channel: `{Context.Channel.Name}`\n" +
                        $"Id: `{i}`\n" +
@@ -172,7 +171,7 @@ namespace SandwichDeliveryBot3.Modules.Public
 
                     SS.hasAnOrder.Add(Context.User.Id, i);
                     SS.totalOrders += 1;
-                    await usrc.SendMessageAsync("", embed: builder);
+                    await usrc.SendMessageAsync("<@&307939487231508481>", embed: builder);
                     
 
 
