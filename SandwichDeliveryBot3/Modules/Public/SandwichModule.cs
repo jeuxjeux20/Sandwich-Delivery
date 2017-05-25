@@ -154,7 +154,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                     SS.activeOrders.Add(i, o);
                     var builder = new EmbedBuilder();
                     builder.ThumbnailUrl = Context.User.GetAvatarUrl();
-                    builder.Title = $"<@&307939487231508481> | New order from {Context.Guild.Name}(`{Context.Guild.Id}`)";
+                    builder.Title = $" New order from {Context.Guild.Name}(`{Context.Guild.Id}`)";
                     var desc = $"Ordered by: **{Context.User.Username}**#**{Context.User.Discriminator}**(`{Context.User.Id}`)\n" +
                        $"Channel: `{Context.Channel.Name}`\n" +
                        $"Id: `{i}`\n" +
@@ -170,7 +170,7 @@ namespace SandwichDeliveryBot3.Modules.Public
 
                     SS.hasAnOrder.Add(Context.User.Id, i);
                     SS.totalOrders += 1;
-                    await usrc.SendMessageAsync("", embed: builder);
+                    await usrc.SendMessageAsync("<@&307939487231508481>", embed: builder); //mention in the MESSAGE not the embed. smh
                     SS.LogCommand(Context, "Order", new string[] { order });
 
 

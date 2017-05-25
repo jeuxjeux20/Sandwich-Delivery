@@ -81,61 +81,69 @@ namespace Dopost.SandwichService
             IGuild usr = await context.Client.GetGuildAsync(usrID);
             ITextChannel clogchannel = await usr.GetTextChannelAsync(311240926615830529);
             //Create special variables
-            arguments = arguments ?? new string[] { "None given." };
-            var fullname = string.Format("{0}#{1}({2})", context.User.Username, context.User.Discriminator, context.User.Id);
-            var fullservername = string.Format("{0}({1})",context.Guild.Name, context.Guild.Id);
-            var fullchannelname = string.Format("{0}({1})", context.Channel.Name, context.Channel.Id);
-            var argumentparse = string.Join(" , ", arguments);
-            var c = new Color(255, 169, 33);
-            //Build and send embed
-            await clogchannel.SendMessageAsync("Command Used:", embed: new EmbedBuilder()
-                .AddField(builder =>
-                {
-                    builder.Name = "Command:";
-                    builder.Value = commandname;
-                    builder.IsInline = true;
-                })
-               .AddField(builder =>
-               {
-                   builder.Name = "User:";
-                   builder.Value = fullname;
-                   builder.IsInline = true;
-               })
-               .AddField(builder =>
-               {
-                   builder.Name = "Server:";
-                   builder.Value = context.Guild.Name;
-                   builder.IsInline = true;
-               })
-               .AddField(builder =>
-               {
-                   builder.Name = "Channel:";
-                   builder.Value = fullchannelname;
-                   builder.IsInline = true;
-               })
-               .AddField(builder =>
-               {
-                   builder.Name = "Arguments:";
-                   builder.Value = argumentparse;
-                   builder.IsInline = true;
-               })
-               .AddField(builder =>
-               {
-                   builder.Name = "Date:";
-                   builder.Value = DateTime.Now;
-                   builder.IsInline = true;
-               })
-               .AddField(builder =>
-               {
-                   builder.Name = "Raw Message:";
-                   builder.Value = "```"+context.Message.Content+"```";
-                   builder.IsInline = true;
-               })
-               .WithUrl("https://discord.gg/XgeZfE2")
-               .WithColor(c)
-               .WithThumbnailUrl(context.User.GetAvatarUrl())
-               .WithTitle($"New command used by `{context.User.Username}#{context.User.Discriminator}`, in `#{context.Channel.Name}` at `{context.Guild.Name}`.")
-               .WithTimestamp(DateTime.Now));
+            try
+            {
+                arguments = arguments ?? new string[] { "None given." };
+                var fullname = string.Format("{0}#{1}({2})", context.User.Username, context.User.Discriminator, context.User.Id);
+                var fullservername = string.Format("{0}({1})", context.Guild.Name ?? "unable to get name", context.Guild.Id); //Crashes a LOT on this line
+                var fullchannelname = string.Format("{0}({1})", context.Channel.Name, context.Channel.Id);
+                var argumentparse = string.Join(" , ", arguments);
+                var c = new Color(255, 169, 33);
+
+                //Build and send embed
+                await clogchannel.SendMessageAsync("Command Used:", embed: new EmbedBuilder()
+                    .AddField(builder =>
+                    {
+                        builder.Name = "Command:";
+                        builder.Value = commandname;
+                        builder.IsInline = true;
+                    })
+                   .AddField(builder =>
+                   {
+                       builder.Name = "User:";
+                       builder.Value = fullname;
+                       builder.IsInline = true;
+                   })
+                   .AddField(builder =>
+                   {
+                       builder.Name = "Server:";
+                       builder.Value = context.Guild.Name;
+                       builder.IsInline = true;
+                   })
+                   .AddField(builder =>
+                   {
+                       builder.Name = "Channel:";
+                       builder.Value = fullchannelname;
+                       builder.IsInline = true;
+                   })
+                   .AddField(builder =>
+                   {
+                       builder.Name = "Arguments:";
+                       builder.Value = argumentparse;
+                       builder.IsInline = true;
+                   })
+                   .AddField(builder =>
+                   {
+                       builder.Name = "Date:";
+                       builder.Value = DateTime.Now;
+                       builder.IsInline = true;
+                   })
+                   .AddField(builder =>
+                   {
+                       builder.Name = "Raw Message:";
+                       builder.Value = "```" + context.Message.Content + "```";
+                       builder.IsInline = true;
+                   })
+                   .WithUrl("https://discord.gg/XgeZfE2")
+                   .WithColor(c)
+                   .WithThumbnailUrl(context.User.GetAvatarUrl())
+                   .WithTitle($"New command used by `{context.User.Username}#{context.User.Discriminator}`, in `#{context.Channel.Name}` at `{context.Guild.Name}`.")
+                   .WithTimestamp(DateTime.Now));
+            }
+            catch (Exception e)
+            {
+                await clogchannel.SendMessageAsync($"<@131182268021604352> ay fam critical error. ```{e}```"); //hope this fixes. defensive programming amirite
+            }
         }
 
         public void Load()

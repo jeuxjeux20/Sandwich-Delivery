@@ -9,6 +9,10 @@ using System.Diagnostics;
 using SandwichBot.SandwichBase;
 using Dopost.SandwichService;
 using System.Collections.Generic;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using System.Reflection;
+using Microsoft.CodeAnalysis.Scripting;
+using SandwichBot.ChefBase;
 
 namespace UtilityModuleNameSpace
 {
@@ -71,7 +75,139 @@ namespace UtilityModuleNameSpace
             SS.LogCommand(Context, "Info");
         }
 
-        private static string GetUptime()
+        [Command("eval")]
+        public async Task Evaluate([Remainder]string code)
+        {
+            if (Context.User.Id == 131182268021604352)
+            {
+                var _timer = new Stopwatch();
+                _timer.Start();
+                var clean = GetFormattedCode("cs", code);
+                var options = GetOptions();
+
+
+                object r;
+                try
+                {
+                    r = await CSharpScript.EvaluateAsync(code, options, new SandwichService());
+                }
+                catch (Exception e)
+                {
+                    r = e;
+                }
+                _timer.Stop();
+                Embed n = GetEmbed(code, r, _timer.ElapsedMilliseconds);
+                await ReplyAsync("", embed: n);
+            }
+            else
+            {
+                await ReplyAsync("You do not have permission to use this command!");
+            }
+        }
+
+
+        public ScriptOptions GetOptions()
+        {
+            var options = ScriptOptions.Default
+            .AddReferences(
+                typeof(string).GetTypeInfo().Assembly,
+                typeof(Assembly).GetTypeInfo().Assembly,
+                typeof(Task).GetTypeInfo().Assembly,
+                typeof(Enumerable).GetTypeInfo().Assembly,
+                typeof(List<>).GetTypeInfo().Assembly,
+                typeof(IGuild).GetTypeInfo().Assembly,
+                typeof(SocketGuild).GetTypeInfo().Assembly,
+                typeof(Chef).GetTypeInfo().Assembly,
+                typeof(Sandwich).GetTypeInfo().Assembly
+            )
+            .AddImports(
+                "System",
+                "System.Reflection",
+                "System.Threading.Tasks",
+                "System.Linq",
+                "System.Collections.Generic",
+                "Discord",
+                "Discord.WebSocket",
+                "SandwichBot.ChefBase",
+                "SandwichBot.SandwichBase",
+                "SandwichBot",
+                "Discord.Commands",
+                "ChefStatusEnums",
+                "OrderStatusEnums",
+                "Dopost.SandwichService"
+            );
+
+            return options;
+        }
+
+        public string GetFormattedCode(string language, string rawmsg)
+        {
+            string code = rawmsg;
+
+            if (code.StartsWith("```"))
+                code = code.Substring(3, code.Length - 6);
+            if (code.StartsWith(language))
+                code = code.Substring(2, code.Length - 2);
+
+            code = code.Trim();
+            code = code.Replace(";\n", ";");
+            code = code.Replace("; ", ";");
+            code = code.Replace(";", ";\n");
+
+            return code;
+        }
+
+
+        public Embed GetEmbed(string code, object result, long executeTime)
+        {
+            var builder = new EmbedBuilder();
+            builder.Color = new Color(25, 128, 0);
+            builder.AddField(x =>
+            {
+                x.Name = "Code";
+                x.Value = $"```cs\n{code}```";
+            });
+            builder.AddField(x =>
+            {
+                x.Name = $"Result<{result?.GetType().FullName ?? "null"}>";
+
+                if (result is Exception ex)
+                    x.Value = ex.Message;
+                else
+                    x.Value = result ?? "null";
+            });
+            builder.WithFooter(x =>
+            {
+                x.Text = $"In {executeTime}ms";
+            });
+
+            return builder;
+        }
+    
+
+    //public async Task<Embed> EvalAsync(SocketCommandContext context, string content)
+    //{
+    //    var _timer = new Stopwatch();
+    //    _timer.Start();
+
+    //    var cleancode = GetFormattedCode("cs", content);
+    //    var options = GetOptions();
+    //    object result;
+
+    //    try
+    //    {
+    //        result = await CSharpScript.EvaluateAsync(cleancode, options, new RoslynGlobals(_provider, context));
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        result = ex;
+    //    }
+    //    _timer.Stop();
+
+    //    return GetEmbed(cleancode, result, _timer.ElapsedMilliseconds);
+    //}
+
+    private static string GetUptime()
             => (DateTime.Now - Process.GetCurrentProcess().StartTime).ToString(@"dd\.hh\:mm\:ss");
         private static string GetHeapSize() => Math.Round(GC.GetTotalMemory(true) / (1024.0 * 1024.0), 2).ToString();
     }
