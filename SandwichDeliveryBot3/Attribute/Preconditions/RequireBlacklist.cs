@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using Discord.Commands;
 using System.Linq;
 using Discord.WebSocket;
-using Dopost.SandwichService;
-using SandwichBot.ChefBase;
+using SandwichDeliveryBot.SService;
+using SandwichDeliveryBot.ChefClass;
 
 namespace RequireBlacklistPrecon
 {

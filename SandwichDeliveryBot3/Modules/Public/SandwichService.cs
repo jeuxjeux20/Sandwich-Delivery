@@ -1,35 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SandwichBot.SandwichBase;
 using Newtonsoft.Json;
 using System.IO;
 using Discord;
-using Discord.WebSocket;
-using SandwichBot.ChefBase;
 using Discord.Commands;
-using System.Threading.Tasks;
+using SandwichDeliveryBot.SandwichClass;
+using SandwichDeliveryBot.ChefClass;
 
-namespace Dopost.SandwichService
+namespace SandwichDeliveryBot.SService
 {
     public class SandwichService
     {
         public Dictionary<int, Sandwich> activeOrders = new Dictionary<int, Sandwich>();
         public Dictionary<ulong, int> hasAnOrder = new Dictionary<ulong, int>();
         public Dictionary<string, Chef> chefList = new Dictionary<string, Chef>();
-        public static List<ulong> blacklisted = new List<ulong>();
+        public List<ulong> blacklisted = new List<ulong>();
         public List<ulong> givenFeedback = new List<ulong>();
         public List<int> toBeDelivered = new List<int>();
         public List<Sandwich> cache = new List<Sandwich>();
         public int totalOrders = 0;
-        public string version = "2.3";
-        public string date = "May 8th 2017, 5pm CST";
-        public string updatename = "Added new method to main server called 'LogCommand', logs all activity to our 'commandlog' channel. Minor fixes and changes that can be viewed by the commit history over at the github.";
+        public string version = "2.4";
+        public string date = "May 29th 2017, 8pm CST";
+        public string updatename = "Message kitchen commands, SQL Warning database. Fun stuff";
         public string motd;
         public ulong usrID = 264222431172886529;    //264222431172886529  297910882976006154
         public ulong usrcID = 285529162511286282;   //285529162511286282 298552977504075777
         public ulong usrlogcID = 287990510428225537; //287990510428225537 306909741622362112
-
+        
        
 
         public void Save()
@@ -40,6 +38,7 @@ namespace Dopost.SandwichService
                 {
                     JsonSerializer.Create().Serialize(sw, activeOrders);
                     Console.WriteLine("serialized order");
+                    
                 }
                 using (var sw = new StreamWriter(@"data/ordercount.json", false))
                 {

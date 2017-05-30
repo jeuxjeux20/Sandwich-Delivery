@@ -2,19 +2,18 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
-using Dopost.SandwichService;
 using Discord.Commands;
-using SandwichBot.SandwichBase;
-using OrderStatusEnums;
-using ChefStatusEnums;
-using SandwichBot.ChefBase;
 using RequireSandwichArtistPrecon;
 using RequireBlacklistPrecon;
 using inUSRPrecon;
 using NotBlacklistedPreCon;
 using System.Collections.Generic;
+using SandwichDeliveryBot.SService;
+using SandwichDeliveryBot.SandwichClass;
+using SandwichDeliveryBot.OrderStatusEnum;
+using SandwichDeliveryBot.ChefClass;
 
-namespace SandwichDeliveryBot3.Modules.Public
+namespace SandwichDeliveryBot3.SandwichMod
 {
     public class SandwichModule : ModuleBase
     {
@@ -23,11 +22,12 @@ namespace SandwichDeliveryBot3.Modules.Public
         {
             SS = s;
         }
-
+        
         [Command("getordercount")]
         public async Task GetOrderCount()
         {
-            await ReplyAsync($"We have served `{SS.totalOrders}`");
+            await Context.Message.DeleteAsync();
+            await ReplyAsync($"{Context.User.Mention} We have served `{SS.totalOrders}`");
             SS.LogCommand(Context, "Get Order Count");
         }
 
@@ -39,9 +39,137 @@ namespace SandwichDeliveryBot3.Modules.Public
         public async Task GetAllOrders()
         {
             var s = string.Join("` \r\n `", SS.activeOrders.Keys);
-            await ReplyAsync($"`{s}`");
+            await Context.Message.DeleteAsync();
+            await ReplyAsync($"{Context.User.Mention} `{s}`");
             SS.LogCommand(Context, "Get All Orders");
         }
+
+        [Command("respond")]
+        [Alias("r")]
+        [NotBlacklisted]
+        [RequireSandwichArtist]
+        public async Task Respond(int id, [Remainder]string response)
+        {
+            if (SS.activeOrders.FirstOrDefault(s => s.Value.Id == id).Value != null)
+            {
+                Sandwich order = SS.activeOrders.FirstOrDefault(s => s.Value.Id == id).Value;
+                try
+                {
+                    IGuild g = await Context.Client.GetGuildAsync(order.GuildId);
+                    ITextChannel t = await g.GetTextChannelAsync(order.ChannelId);
+                    Color c = new Color(255, 43, 43);
+                    if (t != null)
+                    {
+                        await t.SendMessageAsync($"<@{order.UserId}>, {Context.User.Username}#{Context.User.Discriminator} from The Kitchen™ as responded to your order! They said this:", embed: new EmbedBuilder()
+                .AddField(builder =>
+                {
+                    builder.Name = "Message:";
+                    builder.Value = "```" + response + "```";
+                    builder.IsInline = true;
+                })
+                 .AddField(builder =>
+                 {
+                     builder.Name = "Your order:";
+                     builder.Value = order.Desc;
+                     builder.IsInline = true;
+                 })
+                .AddField(builder =>
+                {
+                    builder.Name = "Respond Back?";
+                    builder.Value = "If you wish to respond use the `;messagekitchen` command! (`;mk` for short). Ex `;mk Sorry about the typo! I want it with cheese!` or `;messagekitchen Hey thanks for the sandwich, I really enjoyed it!`.";
+                    builder.IsInline = true;
+                })
+                .WithUrl("https://discord.gg/XgeZfE2")
+                .WithColor(c)
+                .WithTitle("Message from The Kitchen™!")
+                .WithTimestamp(DateTime.Now));
+                        await ReplyAsync($"{Context.User.Mention} Response successfully sent!");
+                        IGuild usr = await Context.Client.GetGuildAsync(SS.usrID);
+                        ITextChannel usrc = await usr.GetTextChannelAsync(SS.usrcID);
+                        ITextChannel usrclog = await usr.GetTextChannelAsync(SS.usrlogcID);
+                        await usrclog.SendMessageAsync($"{Context.User.Mention} has responded to order `{order.Id}` with message: `{response}`.");
+                        await Context.Message.DeleteAsync();
+                        SS.LogCommand(Context, "Respond",new string[] {id.ToString(),response });
+                    }
+                }
+                catch (Exception e)//love me some 'defensive' programming
+                {
+                    await ReplyAsync($"Contact Fires. ```{e}```");
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        [Command("messagekitchen")]
+        [Alias("mk")]
+        [NotBlacklisted]
+        public async Task MessageKitchen([Remainder]string message)
+        {
+            if (message.Length > 5)
+            {
+                IGuild usr = await Context.Client.GetGuildAsync(SS.usrID);
+                ITextChannel usrc = await usr.GetTextChannelAsync(SS.usrcID);
+                ITextChannel usrclog = await usr.GetTextChannelAsync(SS.usrlogcID);
+                Color c = new Color(95, 62, 242);
+                await usrc.SendMessageAsync($"New message from {Context.User.Mention}!", embed: new EmbedBuilder()
+                .AddField(builder =>
+                {
+                    builder.Name = "Message:";
+                    builder.Value = "```" + message + "```";
+                    builder.IsInline = true;
+                })
+                 .AddField(builder =>
+                 {
+                     builder.Name = "Guild:";
+                     builder.Value = $"{Context.Guild.Name}({Context.Guild.Id})";
+                     builder.IsInline = true;
+                 })
+                  .AddField(builder =>
+                  {
+                      builder.Name = "Channel:";
+                      builder.Value = $"{Context.Channel.Name}({Context.Channel.Id})";
+                      builder.IsInline = true;
+                  })
+                .WithColor(c)
+                .WithTitle("Message from a customer!")
+                .WithTimestamp(DateTime.Now));
+
+
+                //Too lazy to create an embed and send them to both. so gonna run the shitty way. sorry D:
+
+
+                await usrclog.SendMessageAsync($"New message from {Context.User.Mention}!", embed: new EmbedBuilder()
+                .AddField(builder =>
+                {
+                    builder.Name = "Message:";
+                    builder.Value = "```" + message + "```";
+                    builder.IsInline = true;
+                })
+                 .AddField(builder =>
+                 {
+                     builder.Name = "Guild:";
+                     builder.Value = $"{Context.Guild.Name}({Context.Guild.Id})";
+                     builder.IsInline = true;
+                 })
+                  .AddField(builder =>
+                  {
+                      builder.Name = "Channel:";
+                      builder.Value = $"{Context.Channel.Name}({Context.Channel.Id})";
+                      builder.IsInline = true;
+                  })
+                .WithColor(c)
+                .WithTitle("Message from a customer!")
+                .WithTimestamp(DateTime.Now));
+                await Context.Message.DeleteAsync();
+                await ReplyAsync(":thumbsup:");
+                SS.LogCommand(Context, "Respond", new string[] { message});
+            }
+            else
+            {
+                await ReplyAsync("Your message must be longer then 5 characters.");
+            }
+        }
+
 
         [Command("orderinfo")]
         [Alias("oi")]
@@ -54,7 +182,8 @@ namespace SandwichDeliveryBot3.Modules.Public
             {
                 Sandwich order = SS.activeOrders.FirstOrDefault(s => s.Value.Id == id).Value;
                 Color c = new Color(102, 102, 153);
-                await ReplyAsync("Here is your requested information!", embed: new EmbedBuilder()
+                await Context.Message.DeleteAsync();
+                await ReplyAsync($"{Context.User.Mention} Here is your requested information!", embed: new EmbedBuilder()
                 .AddField(builder =>
                 {
                     builder.Name = "Order";
@@ -170,7 +299,9 @@ namespace SandwichDeliveryBot3.Modules.Public
 
                     SS.hasAnOrder.Add(Context.User.Id, i);
                     SS.totalOrders += 1;
-                    await usrc.SendMessageAsync("<@&307939487231508481>", embed: builder); //mention in the MESSAGE not the embed. smh
+                    var roles = Context.Guild.Roles;
+                    var artist = roles.FirstOrDefault(x => x.Name == "Sandwich Artists");
+                    await usrc.SendMessageAsync($"{artist.Mention}", embed: builder); //mention in the MESSAGE not the embed. smh
                     SS.LogCommand(Context, "Order", new string[] { order });
 
 
@@ -180,6 +311,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                 {
                     await ReplyAsync("This error should not happen! Contact Fires#1043 immediately!");
                     await ReplyAsync($"```{e}```");
+                    Console.WriteLine(e);
                     return;
                 }
                 IDMChannel dm = await Context.User.CreateDMChannelAsync();
@@ -190,6 +322,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine(e);
                     await m.ModifyAsync(msg =>
                     {
                         msg.Content = $":thumbsdown: {Context.User.Mention} We failed to dm you. You're order has been automatically deleted. Please enable DMs and re order. http://i.imgur.com/vY7tThf.png OR http://i.imgur.com/EtaA78Q.png";
@@ -226,6 +359,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                     if (SS.toBeDelivered.Contains(order.Id)) { await ReplyAsync("This order is already ready to be delivered! :angry: "); return; }
                     try //TODO: FIX 403 ERROR
                     {
+                        await Context.Message.DeleteAsync();
                         await ReplyAsync($"{Context.User.Mention} Sandwich order is now ready for delivery! Please assemble the sandwich, once you are complete. `;deliver {id}` to continue! Type `;orderinfo {id}`(short: `;oi {id}`) if you need more info. :wave: ");
                         IGuild s = await Context.Client.GetGuildAsync(order.GuildId);
                         ITextChannel ch = await s.GetTextChannelAsync(order.ChannelId);
@@ -267,6 +401,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                         {
                             await ReplyAsync("Error :ghost:");
                             await ReplyAsync($"```{e}```");
+                            Console.WriteLine(e);
                             await ch.SendMessageAsync(u.Mention + " I cannot send dms to you! Please give me the ability to by going to the servers settings in the top left > privacy settings and enabled direct messages from server users. Thank you. If you believe this error was a mistake, please join our server using `;server` and contact Fires#1043.");
                             return;
                         }
@@ -309,7 +444,8 @@ namespace SandwichDeliveryBot3.Modules.Public
                             try
                             {
                                 Console.WriteLine("passed finish");
-                                await ReplyAsync("DMing you an invite! Go deliver it! Remember to be nice and ask for `;feedback`");
+                                await Context.Message.DeleteAsync();
+                                await ReplyAsync($"{Context.User.Mention} DMing you an invite! Go deliver it! Remember to be nice and ask for `;feedback`");
                                 IGuild s = await Context.Client.GetGuildAsync(order.GuildId);
                                 ITextChannel ch = await s.GetTextChannelAsync(order.ChannelId);
                                 IGuildUser u = await s.GetUserAsync(order.UserId);
@@ -344,12 +480,14 @@ namespace SandwichDeliveryBot3.Modules.Public
                             }
                             catch (Exception ex)
                             {
+                                Console.WriteLine(ex);
                                 if (ex.InnerException is NullReferenceException)
                                 {
+
                                     await ReplyAsync("Order is corrupt. This usually means that the bot was removed or the channel was removed.");
                                 } else {
                                     await ReplyAsync(":ghost:");
-                                    Console.WriteLine(ex);
+                                    //Console.WriteLine(ex);
                                     await ReplyAsync($"```{ex}```"); return;
                                 }
                             }
@@ -385,11 +523,12 @@ namespace SandwichDeliveryBot3.Modules.Public
                 Sandwich order = SS.activeOrders.FirstOrDefault(a => a.Value.Id == id).Value;
                 order.Status = OrderStatus.Delivered;
                 SS.activeOrders.Remove(id);
-                await ReplyAsync($"Deleted order {order.Id}!");
+                await ReplyAsync($"{Context.User.Mention} Deleted order {order.Id}!");
                 IGuild s = await Context.Client.GetGuildAsync(order.GuildId);
                 ITextChannel ch = await s.GetTextChannelAsync(order.ChannelId);
                 IGuildUser u = await s.GetUserAsync(order.UserId);
                 IDMChannel dm = await u.CreateDMChannelAsync();
+                await Context.Message.DeleteAsync();
                 SS.LogCommand(Context, "Deny Order", new string[] { id.ToString() });
                 SS.hasAnOrder.Remove(order.UserId);
                 SS.totalOrders -= 1;
@@ -549,8 +688,7 @@ namespace SandwichDeliveryBot3.Modules.Public
         [NotBlacklisted]
         public async Task servercom()
         {
-            var blacklisted = SandwichService.blacklisted;
-            if (blacklisted.Contains(Context.User.Id) || blacklisted.Contains(Context.Guild.Id)) { await Context.Channel.SendMessageAsync("You have been blacklisted from this bot. :cry: "); return; }
+            if (SS.blacklisted.Contains(Context.User.Id) || SS.blacklisted.Contains(Context.Guild.Id)) { await Context.Channel.SendMessageAsync("You have been blacklisted from this bot. :cry: "); return; }
             await ReplyAsync("Come join our server! Feel free to shitpost, spam and do whatever! https://discord.gg/XgeZfE2");
             SS.LogCommand(Context, "Server");
         }
@@ -563,10 +701,8 @@ namespace SandwichDeliveryBot3.Modules.Public
             SS.LogCommand(Context, "MOTD");
         }
 
-        List<ulong> blacklisted = SandwichService.blacklisted; //We need to switch back, fuck static.
         [Command("blacklist")]
         [Alias("b")]
-        [inUSR]
         [RequireBlacklist]
         public async Task Blacklist(ulong id)
         {
@@ -575,11 +711,11 @@ namespace SandwichDeliveryBot3.Modules.Public
                 Chef s = SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value;
                 if (s.canBlacklist)
                 {
-                    SandwichService.blacklisted.Add(id);
+                    SS.blacklisted.Add(id);
                     await ReplyAsync("Successfully blacklisted! :thumbsup: ");
                     IGuild usr = await Context.Client.GetGuildAsync(SS.usrID);
                     ITextChannel usrc = await usr.GetTextChannelAsync(SS.usrlogcID);
-                    await usrc.SendMessageAsync($"{Context.User.Mention} blacklisted id {id}.");
+                    await usrc.SendMessageAsync($"{Context.User.Mention} blacklisted <@{id}>(id).");
                     SS.LogCommand(Context, "Blacklist", new string[] { id.ToString() });
                     SS.Save();
                 }
@@ -593,24 +729,22 @@ namespace SandwichDeliveryBot3.Modules.Public
                 await ReplyAsync("No can do!");
             }
         }
-
-        [Command("blacklistuser")]
-        [Alias("bu")]
-        [inUSR]
+        [Command("blacklist")]
+        [Alias("b")]
         [RequireBlacklist]
-        public async Task BlacklistUser(IGuildUser user)
+        public async Task Blacklist(IGuildUser user)
         {
             if (SS.chefList.FirstOrDefault(s => s.Value.ChefId == Context.User.Id).Value != null)
             {
                 Chef s = SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value;
                 if (s.canBlacklist)
                 {
-                    SandwichService.blacklisted.Add(user.Id);
+                    SS.blacklisted.Add(user.Id);
                     await ReplyAsync("Successfully blacklisted! :thumbsup: ");
                     IGuild usr = await Context.Client.GetGuildAsync(SS.usrID);
                     ITextChannel usrc = await usr.GetTextChannelAsync(SS.usrlogcID);
-                    await usrc.SendMessageAsync($"{Context.User.Mention} blacklisted user {user.Mention}.");
-                    SS.LogCommand(Context, "Blacklist User", new string[] { user.Username });
+                    await usrc.SendMessageAsync($"{Context.User.Mention} blacklisted <@{user.Id}>(user).");
+                    SS.LogCommand(Context, "Blacklist", new string[] { user.Id.ToString() });
                     SS.Save();
                 }
                 else
@@ -624,9 +758,8 @@ namespace SandwichDeliveryBot3.Modules.Public
             }
         }
 
-        [Command("removefromblacklist")]
-        [Alias("rfb")]
-        [inUSR]
+        [Command("unblacklist")]
+        [Alias("ub")]
         [RequireBlacklist]
         public async Task removeFromBlacklist(ulong id)
         {
@@ -635,9 +768,38 @@ namespace SandwichDeliveryBot3.Modules.Public
                 Chef s = SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value;
                 if (s.canBlacklist)
                 {
-                    SandwichService.blacklisted.Remove(id);
+                    SS.blacklisted.Remove(id);
                     await ReplyAsync("Removed! :thumbsup: ");
                     SS.LogCommand(Context, "Remove From Blacklist", new string[] { id.ToString() });
+                    IGuild usr = await Context.Client.GetGuildAsync(SS.usrID);
+                    ITextChannel usrc = await usr.GetTextChannelAsync(SS.usrlogcID);
+                    await usrc.SendMessageAsync($"{Context.User.Mention} unblacklisted <@{id}>(id).");
+                    SS.Save();
+                }
+                else
+                { await ReplyAsync("You cannot do this!"); }
+            }
+            else
+            {
+                await ReplyAsync("You are not an Artist!");
+            }
+        }
+        [Command("unblacklist")]
+        [Alias("ub")]
+        [RequireBlacklist]
+        public async Task removeFromBlacklist(IGuildUser user)
+        {
+            if (SS.chefList.FirstOrDefault(s => s.Value.ChefId == Context.User.Id).Value != null)
+            {
+                Chef s = SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value;
+                if (s.canBlacklist)
+                {
+                    SS.blacklisted.Remove(user.Id);
+                    await ReplyAsync("Removed! :thumbsup: ");
+                    SS.LogCommand(Context, "Remove From Blacklist", new string[] { user.Id.ToString() });
+                    IGuild usr = await Context.Client.GetGuildAsync(SS.usrID);
+                    ITextChannel usrc = await usr.GetTextChannelAsync(SS.usrlogcID);
+                    await usrc.SendMessageAsync($"{Context.User.Mention} unblacklisted <@{user.Id}>(user).");
                     SS.Save();
                 }
                 else
@@ -649,30 +811,85 @@ namespace SandwichDeliveryBot3.Modules.Public
             }
         }
 
-        [Command("removeuserfromblacklist")]
-        [Alias("rufb")]
-        [inUSR]
-        [RequireBlacklist]
-        public async Task removeUserFromBlacklist(IGuildUser user)
-        {
-            if (SS.chefList.FirstOrDefault(s => s.Value.ChefId == Context.User.Id).Value != null)
-            {
-                Chef s = SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value;
-                if (s.canBlacklist)
-                {
-                    SandwichService.blacklisted.Remove(user.Id);
-                    await ReplyAsync("Removed! :thumbsup: ");
-                    SS.LogCommand(Context, "Remove User From Blacklist", new string[] { user.Username });
-                    SS.Save();
-                }
-                else
-                { await ReplyAsync("You cannot do this!"); }
-            }
-            else
-            {
-                await ReplyAsync("You are not an Artist!");
-            }
-        }
+
+
+        //[Command("blacklistuser")]
+        //[Alias("bu")]
+        //[RequireBlacklist]
+        //public async Task BlacklistUser(IGuildUser user)
+        //{
+        //    if (SS.chefList.FirstOrDefault(s => s.Value.ChefId == Context.User.Id).Value != null)
+        //    {
+        //        Chef s = SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value;
+        //        if (s.canBlacklist)
+        //        {
+        //            SS.blacklisted.Add(user.Id);
+        //            await ReplyAsync("Successfully blacklisted! :thumbsup: ");
+        //            IGuild usr = await Context.Client.GetGuildAsync(SS.usrID);
+        //            ITextChannel usrc = await usr.GetTextChannelAsync(SS.usrlogcID);
+        //            await usrc.SendMessageAsync($"{Context.User.Mention} blacklisted user {user.Mention}.");
+        //            SS.LogCommand(Context, "Blacklist User", new string[] { user.Username });
+        //            SS.Save();
+        //        }
+        //        else
+        //        {
+        //            await ReplyAsync("You cannot do this!");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        await ReplyAsync("No can do!");
+        //    }
+        //}
+
+        //[Command("removefromblacklist")]
+        //[Alias("rfb")]
+        //[RequireBlacklist]
+        //public async Task removeFromBlacklist(ulong id)
+        //{
+        //    if (SS.chefList.FirstOrDefault(s => s.Value.ChefId == Context.User.Id).Value != null)
+        //    {
+        //        Chef s = SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value;
+        //        if (s.canBlacklist)
+        //        {
+        //            SS.blacklisted.Remove(id);
+        //            await ReplyAsync("Removed! :thumbsup: ");
+        //            SS.LogCommand(Context, "Remove From Blacklist", new string[] { id.ToString() });
+        //            SS.Save();
+        //        }
+        //        else
+        //        { await ReplyAsync("You cannot do this!"); }
+        //    }
+        //    else
+        //    {
+        //        await ReplyAsync("You are not an Artist!");
+        //    }
+        //}
+
+        //[Command("removeuserfromblacklist")]
+        //[Alias("rufb")]
+        //[inUSR]
+        //[RequireBlacklist]
+        //public async Task removeUserFromBlacklist(IGuildUser user)
+        //{
+        //    if (SS.chefList.FirstOrDefault(s => s.Value.ChefId == Context.User.Id).Value != null)
+        //    {
+        //        Chef s = SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value;
+        //        if (s.canBlacklist)
+        //        {
+        //            SS.blacklisted.Remove(user.Id);
+        //            await ReplyAsync("Removed! :thumbsup: ");
+        //            SS.LogCommand(Context, "Remove User From Blacklist", new string[] { user.Username });
+        //            SS.Save();
+        //        }
+        //        else
+        //        { await ReplyAsync("You cannot do this!"); }
+        //    }
+        //    else
+        //    {
+        //        await ReplyAsync("You are not an Artist!");
+        //    }
+        //}
 
         [Command("totalorders")]
         [Alias("to")]
@@ -688,7 +905,7 @@ namespace SandwichDeliveryBot3.Modules.Public
         [NotBlacklisted]
         public async Task credits()
         {
-            await ReplyAsync($"Special thanks to ``` \r\n Melon - no, you suck \r\n JeuxJeux20 - Json help, bot wouldn't exist without you.  \r\n LewisTehMinerz - Made Fires not be lonely in the project, and has done stuff for him. \r\n Bloxri - Assorted C# knowledge \r\n Discord Pizza - Inspiration \r\n Discord Api DiscordNet Channel Members - Helped me get Discord.Net 1.0 set up and working, Love you flam: kissing_heart: ```");
+            await ReplyAsync($"Special thanks to ``` \r\n Melon - no, you suck \r\n JeuxJeux20 - Json help, bot wouldn't exist without you.  \r\n LewisTehMinerz - Made Fires not be lonely in the project, and has done stuff for him. \r\n Bloxri - Assorted C# knowledge \r\n Discord Pizza - Inspiration \r\n Discord Api DiscordNet Channel Members - Helped me get Discord.Net 1.0 set up and working, Love you flam: kissing_heart: \r\n Aux - Evaluate command \r\n All of the folks from the USR discord. :)```");
             SS.LogCommand(Context, "Credits");
         }
 
@@ -722,7 +939,6 @@ namespace SandwichDeliveryBot3.Modules.Public
          ");
             SS.LogCommand(Context, "Help");
         }
-
-
+        
     }
 }

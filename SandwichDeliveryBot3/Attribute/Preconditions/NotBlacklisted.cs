@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Discord.Commands;
 using Discord.WebSocket;
-using Dopost.SandwichService;
+using SandwichDeliveryBot.SService;
 using System.Collections.Generic;
 
 namespace NotBlacklistedPreCon
@@ -18,6 +18,8 @@ namespace NotBlacklistedPreCon
 
             // due to an issue we're statically accessing the blacklist
             //SandwichService SandwichService = map.Get<SandwichService>();
+
+            SandwichService SandwichService = map.Get<SandwichService>();
 
             Console.WriteLine(SandwichService.blacklisted.Count);
             var blacklisted = SandwichService.blacklisted;

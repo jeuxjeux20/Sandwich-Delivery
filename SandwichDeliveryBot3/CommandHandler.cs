@@ -1,11 +1,9 @@
 using System.Threading.Tasks;
-using System;
 using System.Reflection;
 using Discord.Commands;
 using Discord.WebSocket;
-using Dopost.SandwichService;
 
-namespace SandwichDeliveryBot
+namespace SandwichDeliveryBot.Handler
 {
     public class CommandHandler
     {
@@ -13,11 +11,6 @@ namespace SandwichDeliveryBot
         private DiscordSocketClient client;
         private IDependencyMap map;
 
-        SandwichService SS;
-        public CommandHandler(SandwichService s)
-        {
-            SS = s;
-        }
         public async Task Install(IDependencyMap _map)
         {
             // Create Command Service, inject it into Dependency Map
@@ -37,11 +30,12 @@ namespace SandwichDeliveryBot
             // Don't handle the command if it is a system message
             var message = parameterMessage as SocketUserMessage;
             if (message == null) return;
+            if (message.Author.IsBot) return;
           //  Console.WriteLine("beep boop handled2");
             // Mark where the prefix ends and the command begins
             int argPos = 0;
             // Determine if the message has a valid prefix, adjust argPos 
-            if (!(message.HasMentionPrefix(client.CurrentUser, ref argPos) || message.HasCharPrefix('!', ref argPos))) return;
+            if (!(message.HasMentionPrefix(client.CurrentUser, ref argPos) || message.HasCharPrefix(';', ref argPos))) return;
            // Console.WriteLine("beep boop handled3");
             // Create a Command Context
             var context = new CommandContext(client, message);

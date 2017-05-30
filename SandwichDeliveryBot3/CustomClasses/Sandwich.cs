@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
-using OrderStatusEnums;
-using SandwichBot.ChefBase;
-using Discord.Net;
-using Discord;
-using Discord.Commands;
+using SandwichDeliveryBot.OrderStatusEnum;
+using SandwichDeliveryBot.ChefClass;
 
-namespace SandwichBot.SandwichBase
+namespace SandwichDeliveryBot.SandwichClass
 {
 
     [JsonObject]

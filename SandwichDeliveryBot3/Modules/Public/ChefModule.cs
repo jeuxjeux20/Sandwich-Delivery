@@ -2,15 +2,15 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Discord;
-using Dopost.SandwichService;
 using Discord.Commands;
-using SandwichBot.ChefBase;
-using ChefStatusEnums;
 using RequireBlacklistPrecon;
 using inUSRPrecon;
 using NotBlacklistedPreCon;
+using SandwichDeliveryBot.SService;
+using SandwichDeliveryBot.ChefClass;
+using SandwichDeliveryBot.ChefStatusEnum;
 
-namespace ChefModule
+namespace SandwichDeliveryBot.ChefMod
 {
     [Group("artist")]
     public class ChefModule : ModuleBase

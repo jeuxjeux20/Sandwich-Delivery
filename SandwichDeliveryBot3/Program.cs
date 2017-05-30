@@ -3,9 +3,11 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using Discord.Commands;
-using Dopost.SandwichService;
 using System.Linq;
-using OrderStatusEnums;
+using SandwichDeliveryBot.Handler;
+using SandwichDeliveryBot.SService;
+using SandwichDeliveryBot.OrderStatusEnum;
+using SandwichDeliveryBot.WarningDB;
 
 namespace SandwichDeliveryBot
 {
@@ -18,6 +20,7 @@ namespace SandwichDeliveryBot
         private DiscordSocketClient client;
         private CommandHandler handler;
         private SandwichService ss;
+        private WarningDatabase wdb;
         private ulong usrID = 264222431172886529;    //264222431172886529 264222431172886529
         private ulong usrlogcID = 287990510428225537; //287990510428225537 306909741622362112
 
@@ -28,7 +31,7 @@ namespace SandwichDeliveryBot
             client = new DiscordSocketClient();
 
 
-            var token = "no"; 
+            var token = "angery"; 
 
 
             client.Log += async (message) =>
@@ -41,7 +44,7 @@ namespace SandwichDeliveryBot
                 IGuild usr =  client.GetGuild(usrID);
                 ITextChannel usrc = await usr.GetTextChannelAsync(usrlogcID);
                 await usrc.SendMessageAsync($":slight_smile: I have joined `{m.Name}`(`{m.Id}`), I am now in {client.Guilds.Count} servers!");
-                await m.DefaultChannel.SendMessageAsync("Hi I am **Sandwich Delivery Bot**.Thank you for choosing our bot! To order a Sandwich, type `;order extra large blt`. For the list of commands, we have `;help`. If you wish to contact us, please use `; server`. \r\n **Please understand that when you order, you will recieve what you ordered from a *****real*****person. They have feelings.**");
+                await m.DefaultChannel.SendMessageAsync(ss.motd);
                 if (!m.CurrentUser.GuildPermissions.CreateInstantInvite)
                 {
                     await m.DefaultChannel.SendMessageAsync(":warning: The bot cannot create instant invites! Please give the bot permission or else it will not work! :warning: ");
@@ -99,11 +102,18 @@ namespace SandwichDeliveryBot
                     Console.WriteLine($"Added order {obj.Value.Id} to toBeDelivered.");
                 }
             }
+
+
+            wdb = new WarningDatabase();
+
+
+
             // Login and connect to Discord.
             var map = new DependencyMap();
             map.Add(client);
             handler = new CommandHandler();
             map.Add(ss);
+            map.Add(wdb);
             await handler.Install(map);
             await client.LoginAsync(TokenType.Bot, token);
             await client.StartAsync();
