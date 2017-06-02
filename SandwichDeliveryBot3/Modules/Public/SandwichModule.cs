@@ -34,7 +34,6 @@ namespace SandwichDeliveryBot3.SandwichMod
         [Command("getallorders")]
         [Alias("gao")]
         [NotBlacklisted]
-        [inUSR]
         [RequireSandwichArtist]
         public async Task GetAllOrders()
         {
@@ -174,7 +173,6 @@ namespace SandwichDeliveryBot3.SandwichMod
         [Command("orderinfo")]
         [Alias("oi")]
         [NotBlacklisted]
-        [inUSR]
         [RequireSandwichArtist]
         public async Task OrderInfo(int id)
         {
@@ -299,9 +297,16 @@ namespace SandwichDeliveryBot3.SandwichMod
 
                     SS.hasAnOrder.Add(Context.User.Id, i);
                     SS.totalOrders += 1;
-                    var roles = Context.Guild.Roles;
+                    var roles = usr.Roles;
                     var artist = roles.FirstOrDefault(x => x.Name == "Sandwich Artists");
-                    await usrc.SendMessageAsync($"{artist.Mention}", embed: builder); //mention in the MESSAGE not the embed. smh
+                    if (artist != null)
+                    {
+                        await usrc.SendMessageAsync($"{artist.Mention}", embed: builder); //mention in the MESSAGE not the embed. smh
+                    }
+                    else
+                    {
+                        await usrc.SendMessageAsync($".", embed: builder);
+                    }
                     SS.LogCommand(Context, "Order", new string[] { order });
 
 
@@ -813,84 +818,6 @@ namespace SandwichDeliveryBot3.SandwichMod
 
 
 
-        //[Command("blacklistuser")]
-        //[Alias("bu")]
-        //[RequireBlacklist]
-        //public async Task BlacklistUser(IGuildUser user)
-        //{
-        //    if (SS.chefList.FirstOrDefault(s => s.Value.ChefId == Context.User.Id).Value != null)
-        //    {
-        //        Chef s = SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value;
-        //        if (s.canBlacklist)
-        //        {
-        //            SS.blacklisted.Add(user.Id);
-        //            await ReplyAsync("Successfully blacklisted! :thumbsup: ");
-        //            IGuild usr = await Context.Client.GetGuildAsync(SS.usrID);
-        //            ITextChannel usrc = await usr.GetTextChannelAsync(SS.usrlogcID);
-        //            await usrc.SendMessageAsync($"{Context.User.Mention} blacklisted user {user.Mention}.");
-        //            SS.LogCommand(Context, "Blacklist User", new string[] { user.Username });
-        //            SS.Save();
-        //        }
-        //        else
-        //        {
-        //            await ReplyAsync("You cannot do this!");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        await ReplyAsync("No can do!");
-        //    }
-        //}
-
-        //[Command("removefromblacklist")]
-        //[Alias("rfb")]
-        //[RequireBlacklist]
-        //public async Task removeFromBlacklist(ulong id)
-        //{
-        //    if (SS.chefList.FirstOrDefault(s => s.Value.ChefId == Context.User.Id).Value != null)
-        //    {
-        //        Chef s = SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value;
-        //        if (s.canBlacklist)
-        //        {
-        //            SS.blacklisted.Remove(id);
-        //            await ReplyAsync("Removed! :thumbsup: ");
-        //            SS.LogCommand(Context, "Remove From Blacklist", new string[] { id.ToString() });
-        //            SS.Save();
-        //        }
-        //        else
-        //        { await ReplyAsync("You cannot do this!"); }
-        //    }
-        //    else
-        //    {
-        //        await ReplyAsync("You are not an Artist!");
-        //    }
-        //}
-
-        //[Command("removeuserfromblacklist")]
-        //[Alias("rufb")]
-        //[inUSR]
-        //[RequireBlacklist]
-        //public async Task removeUserFromBlacklist(IGuildUser user)
-        //{
-        //    if (SS.chefList.FirstOrDefault(s => s.Value.ChefId == Context.User.Id).Value != null)
-        //    {
-        //        Chef s = SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value;
-        //        if (s.canBlacklist)
-        //        {
-        //            SS.blacklisted.Remove(user.Id);
-        //            await ReplyAsync("Removed! :thumbsup: ");
-        //            SS.LogCommand(Context, "Remove User From Blacklist", new string[] { user.Username });
-        //            SS.Save();
-        //        }
-        //        else
-        //        { await ReplyAsync("You cannot do this!"); }
-        //    }
-        //    else
-        //    {
-        //        await ReplyAsync("You are not an Artist!");
-        //    }
-        //}
-
         [Command("totalorders")]
         [Alias("to")]
         [NotBlacklisted]
@@ -914,28 +841,35 @@ namespace SandwichDeliveryBot3.SandwichMod
         public async Task Help()
         {
             await ReplyAsync(@"**__COMMANDS__**
-        »order
-            ; order medium blt with extra lettuce
-            Orders something!
-        »feedback
-            ; feedback I didnt get as much extra lettuce as I would have liked, but it was enough. Thanks!
-             ; feedback I didn't get anything close to my order! WTF
-            Sends feedback back to our server, It it highly recommended to include the name of your delivery man / woman, but please do NOT @ THEM IN THE FEEDBACK
-        »motd
-            ; motd
-             Send message that is sent when the bot first 
-        »total orders
-            ; totalorders
-             Returns the amount of orders we have done!
-        »credits
-            ; credits
+
+        **» ;order**
+             Orders a sandwich
+             Example usage:
+             ;order BLT with extra lettuce
+
+        **» ;feedback**
+             Gives our bot some feedback
+             Example usage:
+             ;feedback I didn't get as much extra lettuce as I would have liked, but it was enough. 
+             *Please do not mention our workers in the feedback!*
+
+        **» ;delorder**
+             Deletes your previous order
+
+        **» ;motd**
+             Sends the message that the bot sends when it first joins a server.
+
+       **» ;totalorders**
+             Displays the amount of orders we have done!
+
+        **» ;credits**
              Returns the credits
-        »help
-            ; help
-             THIS
-        »server
-            ; server
-             Gets our server!
+
+        **» ;help**
+             Displays this message
+
+        **» ;server**
+             Gives you an invite to our server!!
          ");
             SS.LogCommand(Context, "Help");
         }

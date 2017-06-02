@@ -24,25 +24,6 @@ namespace SandwichDeliveryBot.SandwichClass
         public ulong UserId { get; set; }
         public ulong GuildId { get; set; }
 
-        [JsonConstructor]
-        public Sandwich( int id, string desc, DateTime ordertime, OrderStatus status, Chef chef, string aurl, string disc, string usernam, string gicon, string gname, ulong gdcid, ulong cid, ulong uid, ulong gid)
-        {
-            Id = id;
-            Desc = desc;
-            date = ordertime;
-            Status = status;
-            OrderChef = chef;
-            AvatarUrl = aurl;
-            Discriminator = disc;
-            UserName = usernam;
-            GuildIcon = gicon;
-            GuildName = gname;
-            GuildDefaultChannelId = gdcid;
-            ChannelId = cid;
-            UserId = uid;
-            GuildId = gid;
-        }
-
         /// <summary>
         /// Create a sandwich
         /// </summary>

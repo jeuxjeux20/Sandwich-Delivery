@@ -25,7 +25,6 @@ namespace SandwichDeliveryBot.ChefMod
         [Command("add")]
         [Alias("a")]
         [NotBlacklisted]
-        [inUSR]
         [RequireBlacklist]
         public async Task AddChef(IGuildUser chef)
         {
@@ -55,7 +54,6 @@ namespace SandwichDeliveryBot.ChefMod
         [Command("del")]
         [Alias("d")]
         [NotBlacklisted]
-        [inUSR]
         [RequireBlacklist]
         public async Task DeleteChef(IGuildUser chef)
         {
@@ -82,7 +80,6 @@ namespace SandwichDeliveryBot.ChefMod
 
         [Command("listdebug")]
         [NotBlacklisted]
-        [inUSR]
         [RequireBlacklist]
         [Alias("l")]
         public async Task ListChefs()
@@ -143,7 +140,6 @@ namespace SandwichDeliveryBot.ChefMod
         [Command("canblacklist")]
         [NotBlacklisted]
         [Alias("cb")]
-        [inUSR]
         [RequireBlacklist]
         public async Task CanBlacklist(IGuildUser user)
         {
@@ -172,7 +168,6 @@ namespace SandwichDeliveryBot.ChefMod
         [Command("promote")]
         [NotBlacklisted]
         [Alias("p")]
-        [inUSR]
         [RequireBlacklist]
         public async Task PromoteArtist(IGuildUser chef)
         {
@@ -225,8 +220,6 @@ namespace SandwichDeliveryBot.ChefMod
         [Command("stats")]
         [Alias("d")]
         [NotBlacklisted]
-        [inUSR]
-        [RequireBlacklist]
         public async Task GetDeliveries(IGuildUser chef)
         {
             ulong n = chef.Id;
@@ -253,7 +246,6 @@ namespace SandwichDeliveryBot.ChefMod
 
         [Command("testattribute")]
         [NotBlacklisted]
-        [inUSR]
         [RequireBlacklist]
         public async Task testattrivute()
         {

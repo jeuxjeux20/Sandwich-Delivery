@@ -32,27 +32,6 @@ namespace SandwichDeliveryBot.WarningMod
             {
                 throw new NoWarningsException("No warnings exist...at all, db fuck up???");
             }
-
-            //List<Warning> warnlist = warn.Cast<Warning>().ToList();
-            //string[] userArray = warn.Select(x => x.UserName).ToArray();
-            //string[] reasonArray = warn.Select(x => x.Reason).ToArray();
-            //Dictionary<string, string> warningsDict = new Dictionary<string, string>();
-            //warningsDict.Add(userArray, reasonArray);
-
-            //This is by far the worst 14 lines of code, I have EVER written...
-            //List<Warning> warnlist = warn.Cast<Warning>().ToList();
-            //string[] userArray = warn.Select(x => x.UserName).ToArray();
-            //string[] reasonArray = warn.Select(x => x.Reason).ToArray();
-            //Dictionary<string, string> warningsDict = new Dictionary<string, string>();
-            //string result = "Nothing lad";
-            //foreach (var obj in userArray)
-            //{
-            //    foreach (var obj2 in reasonArray)
-            //    {
-            //        warningsDict.Add(obj, obj2);
-            //    }
-            //}
-            //result = string.Join(", ", warningsDict.Select(x => string.Format("{0}:{1}", x.Key, x.Value)).ToArray());
             string result;
             if (warn.Length > 0)
             {
@@ -109,8 +88,7 @@ namespace SandwichDeliveryBot.WarningMod
         [Command("examplewarning"), Priority(10)]
         public async Task ExampleWarning()
         {
-            await ReplyAsync(";warnings create 131182268021604352 264222431172886529 Fires#1043 Reason: Bad guy");
-            await ReplyAsync(";warnings create UserID GuildID USERWITH#DISCRIMINATOR Reason because yeah yeah yeah");
+            await ReplyAsync(";warnings create 131182268021604352 264222431172886529 Fires#1043 Reason: Bad guy \r\n ;warnings create UserID GuildID USERWITH#DISCRIMINATOR Reason because yeah yeah yeah");
         }
 
         [Command("delete"), Priority(10)]
