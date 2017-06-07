@@ -305,26 +305,28 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attribute\Preconditions\CanBeDMed.cs" />
     <Compile Include="Attribute\Preconditions\inUSR.cs" />
     <Compile Include="Attribute\Preconditions\NotBlacklisted.cs" />
     <Compile Include="Attribute\Preconditions\RequireBlacklist.cs" />
     <Compile Include="Attribute\Preconditions\RequireSandwichArtist.cs" />
     <Compile Include="CustomClasses\Warning.cs" />
+    <Compile Include="Databases\ArtistDatabase.cs" />
+    <Compile Include="Databases\SandwichDatabase.cs" />
     <Compile Include="Databases\WarningDatabase.cs" />
-    <Compile Include="Enums\ChefStatusEnum.cs" />
+    <Compile Include="Enums\ArtistStatusEnum.cs" />
     <Compile Include="CommandHandler.cs" />
     <Compile Include="Exceptions\NoWarningsException.cs" />
     <Compile Include="Modules\Public\ChefModule.cs" />
+    <Compile Include="Modules\Public\OrderModule.cs" />
     <Compile Include="Modules\Public\SandwichModule.cs" />
-    <Compile Include="Modules\Public\SandwichService.cs" />
+    <Compile Include="Services\SandwichService.cs" />
     <Compile Include="Modules\Public\UtilityModule.cs" />
     <Compile Include="Enums\OrderStatusEnum.cs" />
     <Compile Include="Modules\Public\WarningModule.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CustomClasses\Sandwich.cs" />
-    <Compile Include="CustomClasses\Chef.cs" />
+    <Compile Include="CustomClasses\Artist.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

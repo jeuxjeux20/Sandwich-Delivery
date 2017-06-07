@@ -1,6 +1,6 @@
 ﻿namespace SandwichDeliveryBot.ChefStatusEnum
 {
-    public enum ChefStatus
+    public enum ArtistStatus
     {
         Trainee,
         Artist,

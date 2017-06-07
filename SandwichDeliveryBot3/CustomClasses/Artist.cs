@@ -11,21 +11,8 @@ namespace SandwichDeliveryBot.ChefClass
         public string ChefDistin { get; set; } //self explanatory
         public int ordersAccepted { get; set; } //self explanatory
         public int ordersDelivered { get; set; } //self explanatory
-        public ChefStatus status { get; set; } = ChefStatus.Trainee;
+        public ArtistStatus status { get; set; } = ArtistStatus.Trainee;
         public bool canBlacklist { get; set; } = false;
         public string HiredDate { get; set; }
-
-        public Chef(string d, ulong od, string sid, int cid, int sname, string oa, ChefStatus s)
-        {
-            this.ChefName = d;
-            this.ChefId = od;
-            this.ChefDistin = sid;
-            this.ordersAccepted = cid;
-            this.ordersDelivered = sname;
-            this.HiredDate = oa;
-            this.status = s;
-        }
-
-        
     }
 }
