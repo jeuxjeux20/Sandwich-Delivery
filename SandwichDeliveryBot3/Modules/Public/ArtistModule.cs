@@ -9,6 +9,7 @@ using NotBlacklistedPreCon;
 using SandwichDeliveryBot.SService;
 using SandwichDeliveryBot.ArtistClass;
 using SandwichDeliveryBot.ArtistStatusEnum;
+using SandwichDeliveryBot.Databases;
 
 namespace SandwichDeliveryBot.ArtistMod
 {
@@ -17,41 +18,34 @@ namespace SandwichDeliveryBot.ArtistMod
     {
 
         SandwichService SS;
+        ArtistDatabase ADB;
 
-
-        public ArtistModule(SandwichService s)
+        public ArtistModule(SandwichService s, ArtistDatabase adb)
         {
             SS = s;
+            ADB = adb;
         }
 
-        [Command("add")]
+        [Command("new")]
         [Alias("a")]
         [NotBlacklisted]
         [RequireBlacklist]
-        public async Task AddChef(IGuildUser chef)
+        public async Task AddArtist(IGuildUser artist)
         {
-
-            if (SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value != null)
+            Artist a = await ADB.FindArtist(artist);
+            if (a != null)
             {
-                Chef s = SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value;
-                if (s.canBlacklist)
-                {
-                    string n = string.Format(chef.Username + "#" + chef.Discriminator);
-                    if (!SS.chefList.ContainsKey(n))
-                    {
-                        Chef c = new Chef(n, chef.Id, chef.Discriminator, 0, 0, DateTime.Now.ToString("MMMM dd, yyyy"), ChefStatus.Trainee);
-                        SS.chefList.Add(n, c);
-                        await ReplyAsync($"<@{chef.Id}> had been added as a Trainee Sandwich Artist!");
-                        SS.LogCommand(Context, "Artist Add", new string[] { chef.Username });
-                        //SS.Save();
-                    }
-                    else
-                    {
-                        await ReplyAsync("An entry for this user already exists!");
-                    }
-                }
+                    Artist r = await ADB.FindArtist(Context.User.Id);
+                    string n = string.Format(artist.Username + "#" + artist.Discriminator);
+                    await ADB.NewArtist(artist, DateTime.Now.ToString("MMMM dd, yyyy")  );
+                    await ReplyAsync($"<@{artist.Id}> had been added as a Trainee Sandwich Artist!");
+            }
+            else
+            {
+                await ReplyAsync("This user is already a Sandwich Artist.");
             }
         }
+        
 
         [Command("del")]
         [Alias("d")]

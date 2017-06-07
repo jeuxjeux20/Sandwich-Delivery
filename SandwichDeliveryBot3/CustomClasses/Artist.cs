@@ -1,5 +1,7 @@
-﻿using Newtonsoft.Json;
-using SandwichDeliveryBot.ChefStatusEnum;
+﻿using Discord;
+using Discord.Commands;
+using Newtonsoft.Json;
+using SandwichDeliveryBot.ArtistStatusEnum;
 
 namespace SandwichDeliveryBot.ArtistClass
 {
@@ -14,5 +16,14 @@ namespace SandwichDeliveryBot.ArtistClass
         public ArtistStatus status { get; set; } = ArtistStatus.Trainee;
         public bool canBlacklist { get; set; } = false;
         public string HiredDate { get; set; }
+
+        public Artist(IGuildUser newartist, string date) {
+            this.ArtistId = newartist.Id;
+            this.ArtistName = newartist.Username;
+            this.ArtistDistin = newartist.Discriminator;
+            this.HiredDate = date;
+            this.ordersAccepted = 0;
+            this.ordersAccepted = 0;
+        }
     }
 }

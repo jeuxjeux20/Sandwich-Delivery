@@ -1,7 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
 using SandwichDeliveryBot.OrderStatusEnum;
-using SandwichDeliveryBot.ChefClass;
 using Discord.Commands;
 
 namespace SandwichDeliveryBot.SandwichClass

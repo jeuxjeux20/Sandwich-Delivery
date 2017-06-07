@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 using SandwichDeliveryBot.SandwichClass;
 using Discord;
 using SandwichDeliveryBot.OrderStatusEnum;
+using SandwichDeliveryBot.ArtistClass;
 
 namespace SandwichDeliveryBot.Databases
 {
     public class ArtistDatabase : DbContext
     {
-        public DbSet<Sandwich> Artists { get; set; }
+        public DbSet<Artist> Artists { get; set; }
+
         public ArtistDatabase()
         {
             Database.EnsureCreated();
@@ -28,6 +30,21 @@ namespace SandwichDeliveryBot.Databases
             optionsBuilder.UseSqlite($"Filename={datadir}");
         }
 
+        public async Task<Artist> FindArtist(ulong id)
+        {
+            var a = await Artists.FirstOrDefaultAsync(x => x.ArtistId == id);
+            if (a != null) { return a; } else { return null; }
+        }
+        public async Task<Artist> FindArtist(IGuildUser user)
+        {
+            var a = await Artists.FirstOrDefaultAsync(x => x.ArtistId == user.Id);
+            if (a != null) { return a; } else { return null; }
+        }
 
+        public async Task NewArtist(IGuildUser user, string now)
+        {
+            Artist a = new Artist(user, now);
+            await Artists.AddAsync(a);
+        }
     }
 }

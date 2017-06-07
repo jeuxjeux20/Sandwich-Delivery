@@ -8,6 +8,7 @@ using SandwichDeliveryBot.Handler;
 using SandwichDeliveryBot.SService;
 using SandwichDeliveryBot.OrderStatusEnum;
 using SandwichDeliveryBot.WarningDB;
+using SandwichDeliveryBot.Databases;
 
 namespace SandwichDeliveryBot
 {
@@ -21,6 +22,8 @@ namespace SandwichDeliveryBot
         private CommandHandler handler;
         private SandwichService ss;
         private WarningDatabase wdb;
+        private ArtistDatabase adb;
+        private SandwichDatabase sdb;
         private ulong usrID = 264222431172886529;    //264222431172886529 264222431172886529
         private ulong usrlogcID = 287990510428225537; //287990510428225537 306909741622362112
 
@@ -90,21 +93,11 @@ namespace SandwichDeliveryBot
 
             };
 
-            
-
-            ss = new SandwichService();
-            ss.Load();
-            foreach (var obj in ss.activeOrders)
-            {
-                if (obj.Value.Status == OrderStatus.ReadyToDeliver)
-                {
-                    ss.toBeDelivered.Add(obj.Value.Id);
-                    Console.WriteLine($"Added order {obj.Value.Id} to toBeDelivered.");
-                }
-            }
-
+           
 
             wdb = new WarningDatabase();
+            adb = new ArtistDatabase();
+            sdb = new SandwichDatabase();
 
 
 
@@ -114,6 +107,8 @@ namespace SandwichDeliveryBot
             handler = new CommandHandler();
             map.Add(ss);
             map.Add(wdb);
+            map.Add(adb);
+            map.Add(sdb);
             await handler.Install(map);
             await client.LoginAsync(TokenType.Bot, token);
             await client.StartAsync();
