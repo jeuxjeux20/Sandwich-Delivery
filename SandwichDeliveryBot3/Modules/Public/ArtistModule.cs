@@ -30,20 +30,25 @@ namespace SandwichDeliveryBot.ArtistMod
         [Alias("a")]
         [NotBlacklisted]
         [RequireBlacklist]
-        public async Task AddArtist(IGuildUser artist)
+        public async Task AddArtist(params IGuildUser[] artists)
         {
-            Artist a = await ADB.FindArtist(artist);
-            if (a != null)
+            int newartists = 0;
+            foreach (var artist in artists)
             {
+                Artist a = await ADB.FindArtist(artist);
+                if (a != null)
+                {
                     Artist r = await ADB.FindArtist(Context.User.Id);
                     string n = string.Format(artist.Username + "#" + artist.Discriminator);
-                    await ADB.NewArtist(artist, DateTime.Now.ToString("MMMM dd, yyyy")  );
-                    await ReplyAsync($"<@{artist.Id}> had been added as a Trainee Sandwich Artist!");
+                    await ADB.NewArtist(artist, DateTime.Now.ToString("MMMM dd, yyyy"));
+                    newartists++;
+                }
+                else
+                {
+                    await ReplyAsync($"{artist.Username} is already a Sandwich Artist.");
+                }
             }
-            else
-            {
-                await ReplyAsync("This user is already a Sandwich Artist.");
-            }
+            await ReplyAsync($"{newartists} new Artists have been added.");
         }
         
 
@@ -51,114 +56,30 @@ namespace SandwichDeliveryBot.ArtistMod
         [Alias("d")]
         [NotBlacklisted]
         [RequireBlacklist]
-        public async Task DeleteChef(IGuildUser chef)
+        public async Task DeleteArtist(params IGuildUser[] artists)
         {
-            if (SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value != null)
+            int deletedartist = 0;
+            foreach (var artist in artists)
             {
-                Chef s = SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value;
-                if (s.canBlacklist)
+                Artist a = await ADB.FindArtist(artist);
+                if (a != null)
                 {
-                    string n = string.Format(chef.Username + "#" + chef.Discriminator);
-                    if (!SS.chefList.ContainsKey(n))
-                    {
-                        await ReplyAsync("An entry for this user doesn't exist!");
-                    }
-                    else
-                    {
-                        SS.chefList.Remove(n);
-                        await ReplyAsync($"{n} has been removed!");
-                        SS.LogCommand(Context, "Artist Del", new string[] { chef.Username });
-                        //SS.Save();
-                    }
+                    ADB.DelArtist(a);
+                    deletedartist++;
                 }
-            }
-        }
-
-        [Command("listdebug")]
-        [NotBlacklisted]
-        [RequireBlacklist]
-        [Alias("l")]
-        public async Task ListChefs()
-        {
-            return;
-
-            foreach (var obj in SS.chefList)
-            {
-
-                var c = obj.Value;
-                var col = new Color(36, 78, 145);
-                DateTimeOffset parseddate;
-                if (DateTimeOffset.TryParse(c.HiredDate, out parseddate))
-                    Console.WriteLine("Good to go!");
                 else
-                    parseddate = DateTime.Now;
-
-
-                await ReplyAsync("Here is your requested information!", embed: new EmbedBuilder()
-                 .AddField(builder =>
-                 {
-                     builder.Name = "Name";
-                     builder.Value = c.ChefName;
-                     builder.IsInline = true;
-                 })
-                 .AddField(builder =>
-                 {
-                     builder.Name = "Orders Accepted";
-                     builder.Value = c.ordersAccepted;
-                     builder.IsInline = true;
-                 })
-                 .AddField(builder =>
-                 {
-                     builder.Name = "Orders Delivered";
-                     builder.Value = c.ordersDelivered;
-                     builder.IsInline = true;
-                 })
-                 .AddField(builder =>
-                 {
-                     builder.Name = "Rank";
-                     builder.Value = c.status;
-                     builder.IsInline = true;
-                 })
-                 .AddField(builder =>
-                 {
-                     builder.Name = "CanBlacklist?";
-                     builder.Value = c.canBlacklist;
-                     builder.IsInline = true;
-                 })
-                 .WithUrl("https://discord.gg/XgeZfE2")
-                 .WithColor(col)
-                 .WithThumbnailUrl(Context.User.GetAvatarUrl())
-                 .WithTitle("Chef info.")
-                 .WithTimestamp(parseddate));
+                    throw new CantFindInDatabaseException();
             }
+            await ReplyAsync($":thumbsup:, {deletedartist} Artists have been removed.");
         }
 
-        [Command("canblacklist")]
+        [Command("admin")]
         [NotBlacklisted]
-        [Alias("cb")]
+        [Alias("a")]
         [RequireBlacklist]
         public async Task CanBlacklist(IGuildUser user)
         {
-            ulong n = user.Id;
-            if (SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value != null)
-            {
-                if (SS.chefList.FirstOrDefault(s => s.Value.ChefId == n).Value != null)
-                {
-                    Chef c = SS.chefList.FirstOrDefault(a => a.Value.ChefId == n).Value;
-                    Chef s = SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value;
-                    if (s.canBlacklist)
-                    {
-                        c.canBlacklist = true;
-                        await ReplyAsync(":thumbsup:");
-                        SS.LogCommand(Context, "Artist Can Blacklist", new string[] { user.Username });
-                        //SS.Save();
-                    }
-                }
-                else
-                {
-                    await ReplyAsync("No can do, not a real person.");
-                }
-            }
+            
         }
 
         [Command("promote")]
