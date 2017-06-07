@@ -1,4 +1,4 @@
-﻿namespace SandwichDeliveryBot.ChefStatusEnum
+﻿namespace SandwichDeliveryBot.ArtistStatusEnum
 {
     public enum ArtistStatus
     {

@@ -7,17 +7,19 @@ using RequireBlacklistPrecon;
 using inUSRPrecon;
 using NotBlacklistedPreCon;
 using SandwichDeliveryBot.SService;
-using SandwichDeliveryBot.ChefClass;
-using SandwichDeliveryBot.ChefStatusEnum;
+using SandwichDeliveryBot.ArtistClass;
+using SandwichDeliveryBot.ArtistStatusEnum;
 
-namespace SandwichDeliveryBot.ChefMod
+namespace SandwichDeliveryBot.ArtistMod
 {
     [Group("artist")]
-    public class ChefModule : ModuleBase
+    public class ArtistModule : ModuleBase
     {
 
         SandwichService SS;
-        public ChefModule(SandwichService s)
+
+
+        public ArtistModule(SandwichService s)
         {
             SS = s;
         }
