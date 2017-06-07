@@ -1,4 +1,4 @@
-# Sandwich-Delivery-Bot-2.0
+# Sandwich-Delivery-Bot-2.0  [![Build status](https://ci.appveyor.com/api/projects/status/qm7vt2djmq3xo324?svg=true)](https://ci.appveyor.com/project/LewisTehMinerz/sandwich-delivery-bot-v2-0)
 A ~~1400~~ 2200 line discord bot that delivers sandwiches to servers. Discord.Net 1.0 
 
 This bot has been such a fun thing to make.
