@@ -87,6 +87,10 @@ namespace SandwichDeliveryBot
                 {
                     await client.SetGameAsync($"In {client.Guilds.Count()} servers! | Type ;motd for help!");
                 }
+                if (r == 25)
+                {
+                    await client.SetGameAsync($"Cracking open a cold one with the boys | Type ;motd for help!");
+                } 
 
             };
 
