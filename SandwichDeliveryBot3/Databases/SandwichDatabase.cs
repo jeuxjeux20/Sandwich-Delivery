@@ -86,6 +86,16 @@ namespace SandwichDeliveryBot.Databases
             return null;
         }
 
+        public async Task<Sandwich> FindOrder(string id)
+        {
+            var s = await Sandwiches.FirstOrDefaultAsync(x => x.Id == id);
+            if (s != null)
+            {
+                return s;
+            }
+            return null;
+        }
+
         //deny order
 
         //deliver

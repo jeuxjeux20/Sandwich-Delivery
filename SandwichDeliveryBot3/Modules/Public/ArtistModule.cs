@@ -64,7 +64,7 @@ namespace SandwichDeliveryBot.ArtistMod
                 Artist a = await ADB.FindArtist(artist);
                 if (a != null)
                 {
-                    ADB.DelArtist(a);
+                    ADB.DelArtistAsync(a);
                     deletedartist++;
                 }
                 else
@@ -95,67 +95,36 @@ namespace SandwichDeliveryBot.ArtistMod
         [RequireBlacklist]
         public async Task PromoteArtist(IGuildUser chef)
         {
-            ulong n = chef.Id;
-            if (SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value != null)
+            Artist a = await ADB.FindArtist(chef);
+            switch (a.status)
             {
-                if (SS.chefList.FirstOrDefault(s => s.Value.ChefId == n).Value != null)
-                {
-                    Chef c = SS.chefList.FirstOrDefault(a => a.Value.ChefId == n).Value;
-                    Chef s = SS.chefList.FirstOrDefault(a => a.Value.ChefId == Context.User.Id).Value;
-                    if (s.canBlacklist)
-                    {
-                        switch (c.status)
-                        {
-                            case ChefStatus.Trainee:
-                                c.status = ChefStatus.Artist;
-                                await ReplyAsync($"Promoted {chef.Username}#{chef.Discriminator} from Trainee to Sandwich Artist");
-                                SS.LogCommand(Context, "Artist Promote - Trainee to Artist", new string[] { chef.Username });
-                                break;
-                            case ChefStatus.Artist:
-                                c.status = ChefStatus.MasterArtist;
-                                await ReplyAsync($"Promoted {chef.Username}#{chef.Discriminator} from Artist to Master Sandwich Artist");
-                                SS.LogCommand(Context, "Artist Promote - Artist to Master", new string[] { chef.Username });
-                                break;
-                            case ChefStatus.MasterArtist:
-                                c.status = ChefStatus.GodArtist;
-                                await ReplyAsync($"Promoted {chef.Username}#{chef.Discriminator} from Master Sandwich Artist to **GOD** Sandwich Artist");
-                                SS.LogCommand(Context, "Artist Promote - Master to God", new string[] { chef.Username });
-                                break;
-                            case ChefStatus.GodArtist:
-                                await ReplyAsync("You cannot promote a user past God Sandwich Artist!");
-                                SS.LogCommand(Context, "Artist Promote - God error", new string[] { chef.Username });
-                                break;
-                        }
-                    }
-                    //SS.Save();
-                }
+                case ArtistStatus.Trainee:
+                    a.status = ArtistStatus.Artist;
+                    await ReplyAsync($"Promoted {chef.Username}#{chef.Discriminator} from Trainee to Sandwich Artist");
+                    break;
+                case ArtistStatus.Artist:
+                    a.status = ArtistStatus.MasterArtist;
+                    await ReplyAsync($"Promoted {chef.Username}#{chef.Discriminator} from Artist to Master Sandwich Artist");
+                    break;
+                case ArtistStatus.MasterArtist:
+                    a.status = ArtistStatus.GodArtist;
+                    await ReplyAsync($"Promoted {chef.Username}#{chef.Discriminator} from Master Sandwich Artist to **GOD** Sandwich Artist");
+                    break;
+                case ArtistStatus.GodArtist:
+                    await ReplyAsync("You cannot promote a user past God Sandwich Artist!");
+                    break;
             }
-        }
-
-        [Command("count")]
-        [NotBlacklisted]
-        [Alias("c")]
-        public async Task ChefCount()
-        {
-            await ReplyAsync($"There are currently {SS.chefList.Count} Sandwich Artists in the database.");
-            SS.LogCommand(Context, "Artist Count");
         }
 
         [Command("stats")]
         [Alias("d")]
         [NotBlacklisted]
-        public async Task GetDeliveries(IGuildUser chef)
+        public async Task GetDeliveries(params IGuildUser[] artistss)
         {
-            ulong n = chef.Id;
-            if (SS.chefList.FirstOrDefault(s => s.Value.ChefId == n).Value != null)
+            foreach (var chef in artistss)
             {
-                Chef c = SS.chefList.FirstOrDefault(a => a.Value.ChefId == n).Value;
+                Artist c = await ADB.FindArtist(chef);
                 await ReplyAsync($"{chef.Mention} has accepted `{c.ordersAccepted}` orders and delivered `{c.ordersDelivered}`. They have been working here since `{c.HiredDate}` and have the `{c.status}` rank. Their blacklist ability is set to {c.canBlacklist}.");
-                SS.LogCommand(Context, "Artist Stats", new string[] { chef.Username });
-            }
-            else
-            {
-                await ReplyAsync("Failed linq pass.");
             }
         }
 
@@ -163,18 +132,8 @@ namespace SandwichDeliveryBot.ArtistMod
         [NotBlacklisted]
         public async Task listImproved()
         {
-            var s = string.Join("` \r\n `", SS.chefList.Keys);
-            await ReplyAsync("`" + s + "`");
-            SS.LogCommand(Context, "Artist List");
+            var result = string.Join(", \r\n", ADB.Artists.Select(x => string.Format("{0}, {1}", x.ArtistName, x.status)).ToArray());
+            await ReplyAsync("result");
         }
-
-        [Command("testattribute")]
-        [NotBlacklisted]
-        [RequireBlacklist]
-        public async Task testattrivute()
-        {
-            await ReplyAsync("it works");
-        }
-
     }
 }

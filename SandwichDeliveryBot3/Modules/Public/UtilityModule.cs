@@ -31,7 +31,6 @@ namespace SandwichDeliveryBot.UtilityMod
             var application = await Context.Client.GetApplicationInfoAsync();
             await ReplyAsync(
                 $"A user with `MANAGE_SERVER` can invite me to your server here: https://discordapp.com/oauth2/authorize?client_id=285522081775353856&scope=bot&permissions=3073");
-            SS.LogCommand(Context, "Invite");
         }
 
         [Command("updateinfo")]
@@ -40,7 +39,6 @@ namespace SandwichDeliveryBot.UtilityMod
             await ReplyAsync(SS.version);
             await ReplyAsync(SS.updatename);
             await ReplyAsync(SS.date);
-            SS.LogCommand(Context, "Update Info");
         }
 
         [Command("info")]
@@ -56,10 +54,10 @@ namespace SandwichDeliveryBot.UtilityMod
                 //$"- Current Order Count: {SS.activeOrders.Count}\n" +
                 //$"- ToBeDelivered Count: {SS.toBeDelivered.Count}\n" +
                 //$"- HasAnOrder Count: {SS.hasAnOrder.Count}\n" +
-                $"- GivenFeedback Count: {SS.givenFeedback.Count}\n" +
-                $"- ChefList Count: {SS.chefList.Count}\n" +
-                $"- Blacklisted Count: {SS.blacklisted.Count}\n" +
-                $"- Cache Count: {SS.cache.Count}\n" +
+                //$"- GivenFeedback Count: {SS.givenFeedback.Count}\n" +
+                //$"- ChefList Count: {SS.chefList.Count}\n" +
+                //$"- Blacklisted Count: {SS.blacklisted.Count}\n" +
+                //$"- Cache Count: {SS.cache.Count}\n" +
                 //$"- Total Order Count: {SS.totalOrders}\n" +
                 $"- Bot Version: {SS.version}\n" +
                 $"- Update: {SS.updatename}\n\n" +
@@ -71,7 +69,6 @@ namespace SandwichDeliveryBot.UtilityMod
                 $"- Channels: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Channels.Count)}" +
                 $"- Users: {(Context.Client as DiscordSocketClient).Guilds.Sum(g => g.Users.Count)}"
             );
-            SS.LogCommand(Context, "Info");
         }
 
         
