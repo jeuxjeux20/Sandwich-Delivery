@@ -77,9 +77,16 @@ namespace SandwichDeliveryBot.ArtistMod
         [NotBlacklisted]
         [Alias("a")]
         [RequireBlacklist]
-        public async Task CanBlacklist(IGuildUser user)
+        public async Task CanBlacklist(params IGuildUser[] user)
         {
-            
+            int updatedusers = 0;
+            foreach (var artist in user)
+            {
+                var a = await ADB.FindArtist(artist);
+                a.canBlacklist = true;
+                updatedusers++;
+            }
+            await ReplyAsync($":thumbsup:, {updatedusers} Artists have been given Administrator control over the bot.");
         }
 
         [Command("promote")]

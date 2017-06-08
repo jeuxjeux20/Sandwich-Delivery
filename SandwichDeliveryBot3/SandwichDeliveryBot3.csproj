@@ -315,7 +315,8 @@
     <Compile Include="Databases\WarningDatabase.cs" />
     <Compile Include="Enums\ArtistStatusEnum.cs" />
     <Compile Include="CommandHandler.cs" />
-    <Compile Include="Exceptions\NoWarningsException.cs" />
+    <Compile Include="Exceptions\CantFindInDatabaseException.cs" />
+    <Compile Include="Modules\Public\ArtistModule.cs" />
     <Compile Include="Modules\Public\ChefModule.cs" />
     <Compile Include="Modules\Public\OrderModule.cs" />
     <Compile Include="Modules\Public\SandwichModule.cs" />
