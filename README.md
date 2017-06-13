@@ -5,9 +5,6 @@ This bot has been such a fun thing to make.
 
 Requires Discord.Net 1.0
 
-# Projects:
-https://github.com/USRDiscordBots/Sandwich-Delivery-Bot-2.0/projects/1
-
 # Pull requests
 I highly doubt anyone cares enough, but if you spot something and think "o shit that bad fam" feel free to make a pull request to change it. I'm open to suggestions.
 
