@@ -4,9 +4,10 @@ using Discord.Commands;
 using System.Linq;
 using Discord.WebSocket;
 using SandwichDeliveryBot.SService;
-using SandwichDeliveryBot.ChefClass;
+using SandwichDeliveryBot.Databases;
+using SandwichDeliveryBot.ArtistClass;
 
-namespace RequireBlacklistPrecon
+namespace SandwichDeliveryBot3.Precons
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     class RequireBlacklist : PreconditionAttribute
@@ -16,6 +17,7 @@ namespace RequireBlacklistPrecon
         {
 
             SandwichService SandwichService = map.Get<SandwichService>();
+            ArtistDatabase Artistdatabase = map.Get<ArtistDatabase>();
 
 
             var user = context.User as SocketGuildUser;
@@ -32,10 +34,10 @@ namespace RequireBlacklistPrecon
 
             if (user.Roles.Any(role => matchingRoles.Contains(role)))
             {
-                if (SandwichService.chefList.Any(c => user.Id == c.Value.ChefId))
+                Artist a = Artistdatabase.Artists.FirstOrDefault(x => x.ArtistId == context.User.Id);
+                if (a != null)
                 {
-                    Chef c = SandwichService.chefList.FirstOrDefault(ch => user.Id == ch.Value.ChefId).Value;
-                    if (c.canBlacklist)
+                    if (a.canBlacklist)
                         return Task.FromResult(PreconditionResult.FromSuccess());
                     else
                         return Task.FromResult(PreconditionResult.FromError("You do not have the ability to blacklist, which is required for this command to run."));
@@ -48,7 +50,7 @@ namespace RequireBlacklistPrecon
                 }
             }
 
-            return Task.FromResult(PreconditionResult.FromError("User does not have sandwich roles."));
+            return Task.FromResult(PreconditionResult.FromError("You do not have either the Senate, Admin or God Sandwich Artist role.."));
 
 
         }

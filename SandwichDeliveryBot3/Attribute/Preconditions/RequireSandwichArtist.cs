@@ -4,7 +4,7 @@ using Discord.Commands;
 using System.Linq;
 using Discord.WebSocket;
 
-namespace RequireSandwichArtistPrecon
+namespace SandwichDeliveryBot3.Precons
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     class RequireSandwichArtist : PreconditionAttribute

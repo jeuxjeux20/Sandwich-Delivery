@@ -4,37 +4,30 @@ using Discord.Commands;
 using Discord.WebSocket;
 using SandwichDeliveryBot.SService;
 using System.Collections.Generic;
+using SandwichDeliveryBot.Databases;
 
-namespace NotBlacklistedPreCon
+namespace SandwichDeliveryBot3.Precons
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     class NotBlacklisted : PreconditionAttribute
     {
-        public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
+        public override async Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
         {
             var user = context.User as SocketGuildUser;
             if (user == null)
-                return Task.FromResult(PreconditionResult.FromError("The command was not used in a guild."));
+                return await Task.FromResult(PreconditionResult.FromError("The command was not used in a guild."));
 
-            // due to an issue we're statically accessing the blacklist
-            //SandwichService SandwichService = map.Get<SandwichService>();
+            ListingDatabase listings = map.Get<ListingDatabase>();
 
-            SandwichService SandwichService = map.Get<SandwichService>();
-
-            Console.WriteLine(SandwichService.blacklisted.Count);
-            var blacklisted = SandwichService.blacklisted;
-
-            if(blacklisted.Contains(context.User.Id))
-                return Task.FromResult(PreconditionResult.FromError("Your account is blacklisted from using this bot. Please note this is **not** a server blacklist."));
-
-            if (blacklisted.Contains(context.Channel.Id))
-                return Task.FromResult(PreconditionResult.FromError("This channel is blacklisted from using this bot. Please note this is **not** a server or a user blacklist."));
-
-            if (blacklisted.Contains(context.Guild.Id))
-                return Task.FromResult(PreconditionResult.FromError("This server is blacklisted from using this bot."));
-
-            return Task.FromResult(PreconditionResult.FromSuccess());
-
+            string r = await listings.CheckForBlacklist(context.Guild.Id);
+            if (r != null)
+            {
+                return await Task.FromResult(PreconditionResult.FromError(r));
+            }
+            else
+            {
+                return await Task.FromResult(PreconditionResult.FromSuccess());
+            }
         }
     }
 }

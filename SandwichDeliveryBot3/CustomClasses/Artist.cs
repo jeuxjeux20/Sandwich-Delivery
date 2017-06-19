@@ -24,5 +24,7 @@ namespace SandwichDeliveryBot.ArtistClass
             this.ordersAccepted = 0;
             this.ordersAccepted = 0;
         }
+
+        public Artist() { }
     }
 }

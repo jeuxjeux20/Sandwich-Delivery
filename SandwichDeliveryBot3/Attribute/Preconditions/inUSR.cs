@@ -4,7 +4,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using SandwichDeliveryBot.SService;
 
-namespace inUSRPrecon
+namespace SandwichDeliveryBot3.Precons
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     class inUSR : PreconditionAttribute
@@ -17,7 +17,7 @@ namespace inUSRPrecon
 
             SandwichService SandwichService = map.Get<SandwichService>();
 
-            if (context.Guild.Id == SandwichService.usrID)
+            if (context.Guild.Id == SandwichService.USRGuildId)
                 return Task.FromResult(PreconditionResult.FromSuccess());
             else
                 return Task.FromResult(PreconditionResult.FromError("This command cannot be ran outside of our `;server`."));

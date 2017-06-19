@@ -43,7 +43,7 @@ namespace SandwichDeliveryBot.Databases
 
         public string VerifyIdUniqueness(string id)
         {
-            var s = Sandwiches.FirstOrDefault(x => x.Id == id);
+            var s = Sandwiches.FirstOrDefault(x => x.Id.ToLower() == id.ToLower());
             string newid;
             var r = new Random();
             if (s != null)
@@ -68,7 +68,7 @@ namespace SandwichDeliveryBot.Databases
 
         public async Task DelOrder(string id)
         {
-            var s = await Sandwiches.FirstOrDefaultAsync(x => x.Id == id);
+            var s = await Sandwiches.FirstOrDefaultAsync(x => x.Id.ToLower() == id.ToLower());
             if (s != null)
             {
                 Sandwiches.Remove(s);
@@ -88,7 +88,7 @@ namespace SandwichDeliveryBot.Databases
 
         public async Task<Sandwich> FindOrder(string id)
         {
-            var s = await Sandwiches.FirstOrDefaultAsync(x => x.Id == id);
+            var s = await Sandwiches.FirstOrDefaultAsync(x => x.Id.ToLower() == id.ToLower());
             if (s != null)
             {
                 return s;

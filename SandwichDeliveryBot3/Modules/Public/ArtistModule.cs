@@ -3,13 +3,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
-using RequireBlacklistPrecon;
-using inUSRPrecon;
-using NotBlacklistedPreCon;
+//using RequireBlacklistPrecon;
+//using inUSRPrecon;
+//using NotBlacklistedPreCon;
 using SandwichDeliveryBot.SService;
 using SandwichDeliveryBot.ArtistClass;
 using SandwichDeliveryBot.ArtistStatusEnum;
 using SandwichDeliveryBot.Databases;
+using SandwichDeliveryBot3.Precons;
 
 namespace SandwichDeliveryBot.ArtistMod
 {
@@ -36,7 +37,7 @@ namespace SandwichDeliveryBot.ArtistMod
             foreach (var artist in artists)
             {
                 Artist a = await ADB.FindArtist(artist);
-                if (a != null)
+                if (a == null)
                 {
                     Artist r = await ADB.FindArtist(Context.User.Id);
                     string n = string.Format(artist.Username + "#" + artist.Discriminator);
@@ -50,7 +51,7 @@ namespace SandwichDeliveryBot.ArtistMod
             }
             await ReplyAsync($"{newartists} new Artists have been added.");
         }
-        
+
 
         [Command("del")]
         [Alias("d")]
@@ -64,7 +65,7 @@ namespace SandwichDeliveryBot.ArtistMod
                 Artist a = await ADB.FindArtist(artist);
                 if (a != null)
                 {
-                    ADB.DelArtistAsync(a);
+                    await ADB.DelArtistAsync(a);
                     deletedartist++;
                 }
                 else
@@ -84,6 +85,7 @@ namespace SandwichDeliveryBot.ArtistMod
             {
                 var a = await ADB.FindArtist(artist);
                 a.canBlacklist = true;
+                await ADB.SaveChangesAsync();
                 updatedusers++;
             }
             await ReplyAsync($":thumbsup:, {updatedusers} Artists have been given Administrator control over the bot.");
@@ -93,28 +95,33 @@ namespace SandwichDeliveryBot.ArtistMod
         [NotBlacklisted]
         [Alias("p")]
         [RequireBlacklist]
-        public async Task PromoteArtist(IGuildUser chef)
+        public async Task PromoteArtist(params IGuildUser[] chefs)
         {
-            Artist a = await ADB.FindArtist(chef);
-            switch (a.status)
+            foreach (var chef in chefs)
             {
-                case ArtistStatus.Trainee:
-                    a.status = ArtistStatus.Artist;
-                    await ReplyAsync($"Promoted {chef.Username}#{chef.Discriminator} from Trainee to Sandwich Artist");
-                    break;
-                case ArtistStatus.Artist:
-                    a.status = ArtistStatus.MasterArtist;
-                    await ReplyAsync($"Promoted {chef.Username}#{chef.Discriminator} from Artist to Master Sandwich Artist");
-                    break;
-                case ArtistStatus.MasterArtist:
-                    a.status = ArtistStatus.GodArtist;
-                    await ReplyAsync($"Promoted {chef.Username}#{chef.Discriminator} from Master Sandwich Artist to **GOD** Sandwich Artist");
-                    break;
-                case ArtistStatus.GodArtist:
-                    await ReplyAsync("You cannot promote a user past God Sandwich Artist!");
-                    break;
+                Artist a = await ADB.FindArtist(chef);
+                switch (a.status)
+                {
+                    case ArtistStatus.Trainee:
+                        a.status = ArtistStatus.Artist;
+                        await ReplyAsync($"Promoted {chef.Username}#{chef.Discriminator} from Trainee to Sandwich Artist");
+                        break;
+                    case ArtistStatus.Artist:
+                        a.status = ArtistStatus.MasterArtist;
+                        await ReplyAsync($"Promoted {chef.Username}#{chef.Discriminator} from Artist to Master Sandwich Artist");
+                        break;
+                    case ArtistStatus.MasterArtist:
+                        a.status = ArtistStatus.GodArtist;
+                        await ReplyAsync($"Promoted {chef.Username}#{chef.Discriminator} from Master Sandwich Artist to **GOD** Sandwich Artist");
+                        break;
+                    case ArtistStatus.GodArtist:
+                        await ReplyAsync("You cannot promote a user past God Sandwich Artist!");
+                        break;
+                }
+                await ADB.SaveChangesAsync();
             }
         }
+
 
         [Command("stats")]
         [Alias("d")]
@@ -133,7 +140,7 @@ namespace SandwichDeliveryBot.ArtistMod
         public async Task listImproved()
         {
             var result = string.Join(", \r\n", ADB.Artists.Select(x => string.Format("{0}, {1}", x.ArtistName, x.status)).ToArray());
-            await ReplyAsync("result");
+            await ReplyAsync(result);
         }
     }
 }
