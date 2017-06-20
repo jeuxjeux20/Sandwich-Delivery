@@ -172,6 +172,7 @@ namespace SandwichDeliveryBot3.SandwichMod
                 IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
                 ITextChannel usrc = await usr.GetTextChannelAsync(_SS.LogId);
                 await usrc.SendMessageAsync($"{Context.User.Mention} blacklisted <@{id}> for `{reason}`(id).");
+                await ReplyAsync(":thumbsup:");
             }
         }
 
@@ -187,6 +188,7 @@ namespace SandwichDeliveryBot3.SandwichMod
                 IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
                 ITextChannel usrc = await usr.GetTextChannelAsync(_SS.LogId);
                 await usrc.SendMessageAsync($"{Context.User.Mention} blacklisted <@{user.Id}> for `{reason}`(id).");
+                await ReplyAsync(":thumbsup:");
             }
         }
 
@@ -200,6 +202,7 @@ namespace SandwichDeliveryBot3.SandwichMod
             IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
             ITextChannel usrc = await usr.GetTextChannelAsync(_SS.LogId);
             await usrc.SendMessageAsync($"{Context.User.Mention} unblacklisted <@{id}>(id).");
+            await ReplyAsync(":thumbsup:");
         }
 
         [Command("unblacklist")]
@@ -213,6 +216,7 @@ namespace SandwichDeliveryBot3.SandwichMod
             IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
             ITextChannel usrc = await usr.GetTextChannelAsync(_SS.LogId);
             await usrc.SendMessageAsync($"{Context.User.Mention} unblacklisted <@{list.ID}>(case).");
+            await ReplyAsync(":thumbsup:");
         }
 
         [Command("unblacklist")]
@@ -224,6 +228,7 @@ namespace SandwichDeliveryBot3.SandwichMod
             IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
             ITextChannel usrc = await usr.GetTextChannelAsync(_SS.LogId);
             await usrc.SendMessageAsync($"{Context.User.Mention} unblacklisted <@{user.Id}>(user).");
+            await ReplyAsync(":thumbsup:");
         }
 
         [Command("listings")]

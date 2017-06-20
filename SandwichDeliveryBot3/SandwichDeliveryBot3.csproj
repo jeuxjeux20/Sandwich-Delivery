@@ -309,8 +309,11 @@
     <Compile Include="Attribute\Preconditions\NotBlacklisted.cs" />
     <Compile Include="Attribute\Preconditions\RequireBlacklist.cs" />
     <Compile Include="Attribute\Preconditions\RequireSandwichArtist.cs" />
+    <Compile Include="CustomClasses\Listing.cs" />
+    <Content Include="UserInfo.txt" />
     <Compile Include="CustomClasses\Warning.cs" />
     <Compile Include="Databases\ArtistDatabase.cs" />
+    <Compile Include="Databases\ListingDatabase.cs" />
     <Compile Include="Databases\SandwichDatabase.cs" />
     <Compile Include="Databases\WarningDatabase.cs" />
     <Compile Include="Enums\ArtistStatusEnum.cs" />
