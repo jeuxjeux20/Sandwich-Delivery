@@ -4,9 +4,8 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using SandwichDeliveryBot.SandwichClass;
-using Discord;
 using SandwichDeliveryBot.OrderStatusEnum;
+using SandwichDeliveryBot3.CustomClasses;
 
 namespace SandwichDeliveryBot.Databases
 {
@@ -95,17 +94,5 @@ namespace SandwichDeliveryBot.Databases
             }
             return null;
         }
-
-        //deny order
-
-        //deliver
-
-        //acceptorder
-
-        //order
-
-        //orderinfo
-
-        //gao
     }
 }
