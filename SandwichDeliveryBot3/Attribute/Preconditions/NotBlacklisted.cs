@@ -2,8 +2,6 @@
 using System.Threading.Tasks;
 using Discord.Commands;
 using Discord.WebSocket;
-using SandwichDeliveryBot.SService;
-using System.Collections.Generic;
 using SandwichDeliveryBot.Databases;
 
 namespace SandwichDeliveryBot3.Precons

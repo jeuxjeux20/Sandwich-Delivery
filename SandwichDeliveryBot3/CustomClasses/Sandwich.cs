@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using SandwichDeliveryBot.OrderStatusEnum;
 using Discord.Commands;
 
-namespace SandwichDeliveryBot.SandwichClass
+namespace SandwichDeliveryBot3.CustomClasses
 {
     [JsonObject]
     public class Sandwich

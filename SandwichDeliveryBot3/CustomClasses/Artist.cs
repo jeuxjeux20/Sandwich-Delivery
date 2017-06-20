@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using SandwichDeliveryBot.ArtistStatusEnum;
 
-namespace SandwichDeliveryBot.ArtistClass
+namespace SandwichDeliveryBot3.CustomClasses
 {
     [JsonObject]
     public class Artist

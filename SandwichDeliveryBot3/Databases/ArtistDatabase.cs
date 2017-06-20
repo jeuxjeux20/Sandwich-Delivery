@@ -1,13 +1,9 @@
-﻿using Discord.Commands;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
-using SandwichDeliveryBot.SandwichClass;
 using Discord;
-using SandwichDeliveryBot.OrderStatusEnum;
-using SandwichDeliveryBot.ArtistClass;
+using SandwichDeliveryBot3.CustomClasses;
 
 namespace SandwichDeliveryBot.Databases
 {

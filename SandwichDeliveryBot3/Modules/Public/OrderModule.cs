@@ -1,19 +1,13 @@
 ﻿using Discord.Commands;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using SandwichDeliveryBot.Databases;
-using SandwichDeliveryBot.SandwichClass;
 using SandwichDeliveryBot.SService;
-//using NotBlacklistedPreCon;
 using SandwichDeliveryBot.OrderStatusEnum;
-//using RequireSandwichArtistPrecon;
-//using inUSRPrecon;
-using SandwichDeliveryBot.ArtistClass;
 using SandwichDeliveryBot3.Precons;
+using SandwichDeliveryBot3.CustomClasses;
 
 namespace SandwichDeliveryBot3.Modules.Public
 {
@@ -40,13 +34,15 @@ namespace SandwichDeliveryBot3.Modules.Public
 
         [Command("order")]
         [Alias("o")]
-        [NotBlacklisted]
+        //[NotBlacklisted]
         [Summary("Ogre!")]
-        [RequireBotPermission(GuildPermission.CreateInstantInvite)]
+        //[RequireBotPermission(GuildPermission.CreateInstantInvite)]
         public async Task Order([Remainder]string order)
         {
+            Console.WriteLine("hi");
             using (Context.Channel.EnterTypingState())
             {
+                Console.WriteLine("hi");
                 if (order.Length > 1)
                 {
                     var outp = _DB.CheckForExistingOrders(Context.User.Id);
@@ -124,7 +120,7 @@ namespace SandwichDeliveryBot3.Modules.Public
 
         [Command("delorder")]
         [Alias("delo")]
-        [NotBlacklisted]
+       // [NotBlacklisted]
         public async Task DelOrder()
         {
             using (Context.Channel.EnterTypingState())
@@ -132,7 +128,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                 IUserMessage msg = await ReplyAsync("Attempting to delete order...");
                 try
                 {
-                    Listings order = await _DB.FindOrder(Context.User.Id);
+                    Sandwich order = await _DB.FindOrder(Context.User.Id);
                     await _DB.DelOrder(order.Id.ToLower());
                     IGuild usr = await Context.Client.GetGuildAsync(322455281286119466);
                     ITextChannel usrc = await usr.GetTextChannelAsync(322455717254529034);
@@ -155,9 +151,9 @@ namespace SandwichDeliveryBot3.Modules.Public
 
         [Command("acceptorder")]
         [Alias("ao")]
-        [NotBlacklisted]
-        [inUSR]
-        [RequireSandwichArtist]
+       // [NotBlacklisted]
+       // [inUSR]
+       // [RequireSandwichArtist]
         public async Task AcceptOrder(string id)
         {
             using (Context.Channel.EnterTypingState())
@@ -165,7 +161,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                 try
                 {
                     Artist a = await _ADB.FindArtist(Context.User.Id);
-                    Listings o = await _DB.FindOrder(id);
+                    Sandwich o = await _DB.FindOrder(id);
                     if (o.Status == OrderStatus.ReadyToDeliver) { await ReplyAsync("This order is already ready to be delivered! :angry: "); return; }
 
                     await ReplyAsync($"{Context.User.Mention} Sandwich order is now ready for delivery! Please assemble the sandwich, once you are complete. `;deliver {id}` to continue! Type `;orderinfo {id}`(short: `;oi {id}`) if you need more info. :wave: ");
@@ -206,14 +202,14 @@ namespace SandwichDeliveryBot3.Modules.Public
 
         [Command("deliver")]
         [Alias("d")]
-        [NotBlacklisted]
-        [inUSR]
-        [RequireSandwichArtist]
+       // [NotBlacklisted]
+       // [inUSR]
+       // [RequireSandwichArtist]
         public async Task Deliver(string id)
         {
             using (Context.Channel.EnterTypingState())
             {
-                Listings o = await _DB.FindOrder(id);
+                Sandwich o = await _DB.FindOrder(id);
                 if (o.ArtistId == Context.User.Id)
                 {
                     if (o.Status == OrderStatus.ReadyToDeliver)
@@ -266,14 +262,14 @@ namespace SandwichDeliveryBot3.Modules.Public
 
         [Command("denyorder")]
         [Alias("do")]
-        [NotBlacklisted]
-        [inUSR]
-        [RequireSandwichArtist]
+      //  [NotBlacklisted]
+      //  [inUSR]
+       // [RequireSandwichArtist]
         public async Task DenyOrder(string id, [Remainder] string reason)
         {
             try
             {
-                Listings order = await _DB.FindOrder(id);
+                Sandwich order = await _DB.FindOrder(id);
                 order.Status = OrderStatus.Delivered;
                 await _DB.DelOrder(id);
                 await ReplyAsync($"{Context.User.Mention} Deleted order {order.Id}!");
@@ -332,6 +328,111 @@ namespace SandwichDeliveryBot3.Modules.Public
             catch (Exception e)
             {
                 Console.WriteLine(e);
+            }
+        }
+
+        [Command("orderinfo")]
+        [Alias("oi")]
+      //  [NotBlacklisted]
+      //  [RequireSandwichArtist]
+        public async Task OrderInfo(string id)
+        {
+            Sandwich order = await _DB.FindOrder(id);
+            Artist art = await _ADB.FindArtist(order.ArtistId);
+                Color c = new Color(102, 102, 153);
+                await ReplyAsync($"{Context.User.Mention} Here is your requested information!", embed: new EmbedBuilder()
+                .AddField(builder =>
+                {
+                    builder.Name = "Order";
+                    builder.Value = order.Desc;
+                    builder.IsInline = true;
+                })
+                .AddField(builder =>
+                {
+                    builder.Name = "Artist";
+                    if (art != null)
+                    {
+                        builder.Value = art.ArtistName+"#"+art.ArtistDistin;
+                    }
+                    else
+                    {
+                        builder.Value = "None";
+                    }
+                    builder.IsInline = true;
+                })
+                .AddField(builder =>
+                {
+                    builder.Name = "Order Id";
+                    builder.Value = order.Id;
+                    builder.IsInline = true;
+                })
+                .AddField(builder =>
+                {
+                    builder.Name = "Order Server";
+                    builder.Value = order.GuildName;
+                    builder.IsInline = true;
+                })
+                .AddField(builder =>
+                {
+                    builder.Name = "Order Date";
+                    builder.Value = order.date;
+                    builder.IsInline = true;
+                })
+                .AddField(builder =>
+                {
+                    builder.Name = "Customer";
+                    builder.Value = order.UserName + "#" + order.Discriminator;
+                    builder.IsInline = true;
+                })
+                 .AddField(builder =>
+                 {
+                     builder.Name = "Order Status";
+                     builder.Value = order.Status;
+                     builder.IsInline = true;
+                 })
+                .WithUrl("https://discord.gg/XgeZfE2")
+                .WithColor(c)
+                .WithThumbnailUrl(order.AvatarUrl)
+                .WithTitle("Order information")
+                .WithTimestamp(DateTime.Now));
+            
+        }
+
+        [Command("feedback")]
+        [Alias("f")]
+      //  [NotBlacklisted]
+        public async Task Feedback([Remainder]string f)
+        {
+            if (f != null)
+            {
+                try
+                {
+                    IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
+                    ITextChannel usrc = await usr.GetTextChannelAsync(326477534520934401);
+
+                    var builder = new EmbedBuilder();
+                    builder.ThumbnailUrl = Context.User.GetAvatarUrl();
+                    builder.Title = $"New feedback from {Context.User.Username}#{Context.User.Discriminator}(`{Context.User.Id}`)";
+                    var desc = $"{f}";
+                    builder.Description = desc;
+                    builder.Color = new Color(242, 255, 5);
+                    builder.WithFooter(x =>
+                    {
+                        x.Text = "Is this feedback abusive? Please tell Lemon or Fires immediately!";
+                    });
+                    builder.Timestamp = DateTime.Now;
+
+                    await usrc.SendMessageAsync("", embed: builder);
+                    await ReplyAsync("Thank you!");
+                }
+                catch (Exception e)
+                {
+                    await ReplyAsync($"Error! {e}");
+                }
+            }
+            else
+            {
+                await ReplyAsync("Please enter something!");
             }
         }
     }

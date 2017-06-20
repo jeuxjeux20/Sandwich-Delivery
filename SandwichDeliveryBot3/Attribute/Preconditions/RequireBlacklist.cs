@@ -5,7 +5,7 @@ using System.Linq;
 using Discord.WebSocket;
 using SandwichDeliveryBot.SService;
 using SandwichDeliveryBot.Databases;
-using SandwichDeliveryBot.ArtistClass;
+using SandwichDeliveryBot3.CustomClasses;
 
 namespace SandwichDeliveryBot3.Precons
 {
