@@ -6,13 +6,8 @@ using Discord.Commands;
 using Discord.WebSocket;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
-using System.Collections.Generic;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
-using System.Reflection;
-using Microsoft.CodeAnalysis.Scripting;
 using SandwichDeliveryBot.SService;
 using SandwichDeliveryBot3.Precons;
-using SandwichDeliveryBot.SandwichClass;
 
 namespace SandwichDeliveryBot.UtilityMod
 {
@@ -39,6 +34,15 @@ namespace SandwichDeliveryBot.UtilityMod
             await ReplyAsync(SS.version);
             await ReplyAsync(SS.updatename);
             await ReplyAsync(SS.date);
+        }
+
+
+        [Command("server")]
+        [Alias("serv", "s")]
+       // [NotBlacklisted]
+        public async Task servercom()
+        {
+            await ReplyAsync("Come join our server! Feel free to shitpost, spam and do whatever! https://discord.gg/XgeZfE2");
         }
 
         [Command("info")]
