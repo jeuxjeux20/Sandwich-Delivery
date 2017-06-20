@@ -1,16 +1,12 @@
-﻿using Discord.Commands;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SandwichDeliveryBot3.CustomClasses
 {
     public enum ListingType {
         User,
-        Guild
+        Guild,
+        Undefined
     }
 
     public class Listing
@@ -23,7 +19,7 @@ namespace SandwichDeliveryBot3.CustomClasses
         [Key]
         public int Case { get; set; }
 
-        public Listing(string r, ListingType t, ulong id, string name)
+        public Listing(string r, ulong id, string name,ListingType t = ListingType.Undefined)
         {
             Reason = r;
             Type = t;
@@ -31,5 +27,7 @@ namespace SandwichDeliveryBot3.CustomClasses
             Name = name;
             Date = DateTime.Now;
         }
+        public Listing()
+        { }
     }
 }
