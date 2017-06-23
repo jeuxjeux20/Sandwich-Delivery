@@ -7,9 +7,9 @@ namespace SandwichDeliveryBot.SService
     public class SandwichService
     {
         public int totalOrders = 0;
-        public string version = "3.0";
+        public string version = "3.0.1";
         public string date = "June 23rd 2017";
-        public string updatename = "3.0";
+        public string updatename = "Fixed minor 3.0 bugs.";
         public string motd;
         public ulong USRGuildId = 264222431172886529;
         public ulong KitchenId = 285529162511286282;

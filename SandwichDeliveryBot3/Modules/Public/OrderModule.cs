@@ -75,14 +75,14 @@ namespace SandwichDeliveryBot3.Modules.Public
                         });
                         builder.Timestamp = DateTime.Now;
 
-                        var artist = usr.Roles.FirstOrDefault(x => x.Name == "Sandwich rtists"); //FIX
+                        var artist = usr.Roles.FirstOrDefault(x => x.Name.ToLower() == "sandwich artists"); //FIX
                         if (artist != null)
                         {
                             await usrc.SendMessageAsync($"{artist.Mention}", embed: builder);
                         }
                         else
                         {
-                            await usrc.SendMessageAsync($".", embed: builder);
+                            await usrc.SendMessageAsync($" ", embed: builder);
                         }
 
                     }
@@ -408,7 +408,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                 try
                 {
                     IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
-                    ITextChannel usrc = await usr.GetTextChannelAsync(326477534520934401);
+                    ITextChannel usrc = await usr.GetTextChannelAsync(306941357795311617);
 
                     var builder = new EmbedBuilder();
                     builder.ThumbnailUrl = Context.User.GetAvatarUrl();
@@ -422,7 +422,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                     });
                     builder.Timestamp = DateTime.Now;
 
-                    await usrc.SendMessageAsync("", embed: builder);
+                    await usrc.SendMessageAsync(" ", embed: builder);
                     await ReplyAsync("Thank you!");
                 }
                 catch (Exception e)
