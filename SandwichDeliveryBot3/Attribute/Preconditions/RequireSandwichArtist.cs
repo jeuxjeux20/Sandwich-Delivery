@@ -15,7 +15,7 @@ namespace SandwichDeliveryBot3.Precons
             if (user == null)
                 return Task.FromResult(PreconditionResult.FromError("The command was not used in a guild."));
 
-            string[] roleNames = { "sandwich artists", "master sandwich artist", "god sandwich artist" };
+            string[] roleNames = { "sandwich artists", "master sandwich artist", "god sandwich artist", "admin" };
 
             var matchingRoles = context.Guild.Roles.Where(role => roleNames.Any(name => name == role.Name.ToLower()));
 
