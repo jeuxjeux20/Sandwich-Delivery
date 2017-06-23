@@ -14,18 +14,22 @@ namespace SandwichDeliveryBot3.Precons
             var user = context.User as SocketGuildUser;
             if (user == null)
                 return await Task.FromResult(PreconditionResult.FromError("The command was not used in a guild."));
+            ListingDatabase listings;
 
-            ListingDatabase listings = map.Get<ListingDatabase>();
+            listings = map.Get<ListingDatabase>();
+
 
             string r = await listings.CheckForBlacklist(context.Guild.Id);
+            string r2 = await listings.CheckForBlacklist(context.User.Id);
             if (r != null)
             {
                 return await Task.FromResult(PreconditionResult.FromError(r));
             }
-            else
+            if (r2 != null)
             {
-                return await Task.FromResult(PreconditionResult.FromSuccess());
+                return await Task.FromResult(PreconditionResult.FromError(r2));
             }
+            return await Task.FromResult(PreconditionResult.FromSuccess());
         }
     }
 }
