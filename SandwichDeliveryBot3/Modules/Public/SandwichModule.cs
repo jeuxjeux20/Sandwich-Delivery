@@ -153,7 +153,7 @@ namespace SandwichDeliveryBot3.SandwichMod
         //}
 
         [Command("motd")]
-        //[NotBlacklisted]
+        [NotBlacklisted]
         public async Task MOTD()
         {
             await ReplyAsync(_SS.motd);
@@ -161,7 +161,7 @@ namespace SandwichDeliveryBot3.SandwichMod
 
         [Command("blacklist")]
         [Alias("b")]
-      //  [RequireBlacklist]
+        [RequireBlacklist]
         public async Task Blacklist(ulong id, string name = "Undefined", [Remainder]string reason = "No reason given.")
         {
           
@@ -178,7 +178,7 @@ namespace SandwichDeliveryBot3.SandwichMod
 
         [Command("blacklist")]
         [Alias("b")]
-    //    [RequireBlacklist]
+        [RequireBlacklist]
         public async Task Blacklist(IGuildUser user, [Remainder]string reason = "No reason given.")
         {
             Artist a = await _ADB.FindArtist(Context.User.Id);
@@ -195,7 +195,7 @@ namespace SandwichDeliveryBot3.SandwichMod
 
         [Command("unblacklist")]
         [Alias("ub")]
-      //  [RequireBlacklist]
+        [RequireBlacklist]
         public async Task removeFromBlacklist(ulong id)
         {
             await _LDB.RemoveListing(id);
@@ -207,7 +207,7 @@ namespace SandwichDeliveryBot3.SandwichMod
 
         [Command("unblacklist")]
         [Alias("ub")]
-       // [RequireBlacklist]
+        [RequireBlacklist]
         public async Task removeFromBlacklist(int casen)
         {
             Listing[] a = await _LDB.GetArray();
@@ -221,7 +221,7 @@ namespace SandwichDeliveryBot3.SandwichMod
 
         [Command("unblacklist")]
         [Alias("ub")]
-      //  [RequireBlacklist]
+        [RequireBlacklist]
         public async Task removeFromBlacklist(IGuildUser user)
         {
             await _LDB.RemoveListing(user.Id);
@@ -244,6 +244,10 @@ namespace SandwichDeliveryBot3.SandwichMod
         public async Task editListings(ulong id, string type, [Remainder]string reason)
         {
             await _LDB.EditListing(id, reason, type);
+            IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
+            ITextChannel usrc = await usr.GetTextChannelAsync(_SS.LogId);
+            await usrc.SendMessageAsync($"{Context.User.Mention} edited listing, {id}, {type}, {reason}.");
+            await ReplyAsync(":thumbsup:");
         }
 
         [Command("listinginfo")]
@@ -306,7 +310,7 @@ namespace SandwichDeliveryBot3.SandwichMod
 
         [Command("totalorders")]
         [Alias("to")]
-     //   [NotBlacklisted]
+        [NotBlacklisted]
         public async Task TotalOrders()
         {
             await ReplyAsync($"We have proudly served {_SS.totalOrders} sandwiches since June.");
@@ -314,7 +318,7 @@ namespace SandwichDeliveryBot3.SandwichMod
 
         [Command("credits")]
         [Alias("cred")]
-       // [NotBlacklisted]
+        [NotBlacklisted]
         public async Task credits()
         {
             await ReplyAsync($"https://github.com/USRDiscordBots/Sandwich-Delivery-Bot-v2.0/wiki/Getting-Started-as-a-Sandwich-Artist#before-you-continue-a-quick-thank-you-to");

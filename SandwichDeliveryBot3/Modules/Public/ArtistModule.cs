@@ -29,8 +29,8 @@ namespace SandwichDeliveryBot.ArtistMod
 
         [Command("new")]
         [Alias("a")]
-       // [NotBlacklisted]
-       // [RequireBlacklist]
+        [NotBlacklisted]
+        [RequireBlacklist]
         public async Task AddArtist(params IGuildUser[] artists)
         {
             int newartists = 0;
@@ -54,8 +54,8 @@ namespace SandwichDeliveryBot.ArtistMod
 
         [Command("del")]
         [Alias("d")]
-       // [NotBlacklisted]
-      //  [RequireBlacklist]
+        [NotBlacklisted]
+        [RequireBlacklist]
         public async Task DeleteArtist(params IGuildUser[] artists)
         {
             int deletedartist = 0;
@@ -74,9 +74,9 @@ namespace SandwichDeliveryBot.ArtistMod
         }
 
         [Command("admin")]
-       // [NotBlacklisted]
+        [NotBlacklisted]
         [Alias("a")]
-       // [RequireBlacklist]
+        [RequireBlacklist]
         public async Task CanBlacklist(params IGuildUser[] user)
         {
             int updatedusers = 0;
@@ -91,9 +91,9 @@ namespace SandwichDeliveryBot.ArtistMod
         }
 
         [Command("promote")]
-       // [NotBlacklisted]
+        [NotBlacklisted]
         [Alias("p")]
-       // [RequireBlacklist]
+        [RequireBlacklist]
         public async Task PromoteArtist(params IGuildUser[] chefs)
         {
             foreach (var chef in chefs)
@@ -124,7 +124,7 @@ namespace SandwichDeliveryBot.ArtistMod
 
         [Command("stats")]
         [Alias("d")]
-       // [NotBlacklisted]
+        [NotBlacklisted]
         public async Task GetDeliveries(params IGuildUser[] artistss)
         {
             foreach (var chef in artistss)
@@ -135,7 +135,7 @@ namespace SandwichDeliveryBot.ArtistMod
         }
 
         [Command("list")]
-      //  [NotBlacklisted]
+        [NotBlacklisted]
         public async Task listImproved()
         {
             var result = string.Join(", \r\n", ADB.Artists.Select(x => string.Format("{0}, {1}", x.ArtistName, x.status)).ToArray());

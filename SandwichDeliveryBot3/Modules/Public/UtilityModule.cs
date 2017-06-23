@@ -39,10 +39,10 @@ namespace SandwichDeliveryBot.UtilityMod
 
         [Command("server")]
         [Alias("serv", "s")]
-       // [NotBlacklisted]
+        [NotBlacklisted]
         public async Task servercom()
         {
-            await ReplyAsync("Come join our server! Feel free to shitpost, spam and do whatever! https://discord.gg/XgeZfE2");
+            await ReplyAsync("Come join our server! https://discord.gg/XgeZfE2");
         }
 
         [Command("info")]
@@ -55,14 +55,7 @@ namespace SandwichDeliveryBot.UtilityMod
                 $"- Library: Discord.Net ({DiscordConfig.Version})\n" +
                 $"- Runtime: {RuntimeInformation.FrameworkDescription} {RuntimeInformation.OSArchitecture}\n" +
                 $"- Uptime: {GetUptime()}\n\n" +
-                //$"- Current Order Count: {SS.activeOrders.Count}\n" +
-                //$"- ToBeDelivered Count: {SS.toBeDelivered.Count}\n" +
-                //$"- HasAnOrder Count: {SS.hasAnOrder.Count}\n" +
-                //$"- GivenFeedback Count: {SS.givenFeedback.Count}\n" +
-                //$"- ChefList Count: {SS.chefList.Count}\n" +
-                //$"- Blacklisted Count: {SS.blacklisted.Count}\n" +
-                //$"- Cache Count: {SS.cache.Count}\n" +
-                //$"- Total Order Count: {SS.totalOrders}\n" +
+                $"- Total Order Count: {SS.totalOrders}\n" +
                 $"- Bot Version: {SS.version}\n" +
                 $"- Update: {SS.updatename}\n\n" +
                 $"- Update Date: {SS.date}\n" +

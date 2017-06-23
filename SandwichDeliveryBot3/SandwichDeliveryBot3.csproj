@@ -309,6 +309,12 @@
     <Compile Include="Attribute\Preconditions\NotBlacklisted.cs" />
     <Compile Include="Attribute\Preconditions\RequireBlacklist.cs" />
     <Compile Include="Attribute\Preconditions\RequireSandwichArtist.cs" />
+    <Compile Include="CustomClasses\Conversation\ConversationChannel.cs" />
+    <Compile Include="CustomClasses\Conversation\ConversationGuild.cs" />
+    <Compile Include="CustomClasses\Conversation\ConversationUser.cs" />
+    <Compile Include="Databases\ConversationDatabase.cs" />
+    <Compile Include="Enums\ConversationType.cs" />
+    <Compile Include="CustomClasses\Conversation\Conversation.cs" />
     <Compile Include="CustomClasses\Listing.cs" />
     <Content Include="UserInfo.txt" />
     <Compile Include="CustomClasses\Warning.cs" />
@@ -321,8 +327,11 @@
     <Compile Include="Exceptions\CantFindInDatabaseException.cs" />
     <Compile Include="Modules\Public\ArtistModule.cs" />
     <Compile Include="Modules\Public\ChefModule.cs" />
+    <Compile Include="Modules\Public\Conversation\ConversationModule.cs" />
     <Compile Include="Modules\Public\OrderModule.cs" />
+    <Compile Include="Modules\Public\preconditiontesting.cs" />
     <Compile Include="Modules\Public\SandwichModule.cs" />
+    <Compile Include="Services\ConversationService.cs" />
     <Compile Include="Services\SandwichService.cs" />
     <Compile Include="Modules\Public\UtilityModule.cs" />
     <Compile Include="Enums\OrderStatusEnum.cs" />
@@ -334,6 +343,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="ConversationDiagram.cd" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

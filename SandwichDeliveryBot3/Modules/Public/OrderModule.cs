@@ -151,9 +151,9 @@ namespace SandwichDeliveryBot3.Modules.Public
 
         [Command("acceptorder")]
         [Alias("ao")]
-       // [NotBlacklisted]
-       // [inUSR]
-       // [RequireSandwichArtist]
+        [NotBlacklisted]
+        [inUSR]
+        [RequireSandwichArtist]
         public async Task AcceptOrder(string id)
         {
             using (Context.Channel.EnterTypingState())
@@ -202,9 +202,9 @@ namespace SandwichDeliveryBot3.Modules.Public
 
         [Command("deliver")]
         [Alias("d")]
-       // [NotBlacklisted]
-       // [inUSR]
-       // [RequireSandwichArtist]
+        [NotBlacklisted]
+        [inUSR]
+        [RequireSandwichArtist]
         public async Task Deliver(string id)
         {
             using (Context.Channel.EnterTypingState())
@@ -262,9 +262,9 @@ namespace SandwichDeliveryBot3.Modules.Public
 
         [Command("denyorder")]
         [Alias("do")]
-      //  [NotBlacklisted]
-      //  [inUSR]
-       // [RequireSandwichArtist]
+        [NotBlacklisted]
+        [inUSR]
+        [RequireSandwichArtist]
         public async Task DenyOrder(string id, [Remainder] string reason)
         {
             try
@@ -333,8 +333,8 @@ namespace SandwichDeliveryBot3.Modules.Public
 
         [Command("orderinfo")]
         [Alias("oi")]
-      //  [NotBlacklisted]
-      //  [RequireSandwichArtist]
+        [NotBlacklisted]
+        [RequireSandwichArtist]
         public async Task OrderInfo(string id)
         {
             Sandwich order = await _DB.FindOrder(id);
@@ -400,7 +400,7 @@ namespace SandwichDeliveryBot3.Modules.Public
 
         [Command("feedback")]
         [Alias("f")]
-      //  [NotBlacklisted]
+        [NotBlacklisted]
         public async Task Feedback([Remainder]string f)
         {
             if (f != null)

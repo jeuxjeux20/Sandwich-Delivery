@@ -23,12 +23,6 @@ namespace SandwichDeliveryBot.Handler
 
             client.MessageReceived += HandleCommand;
             //Console.WriteLine("installed ");
-            int c = 0;
-            foreach (var com in commands.Commands)
-            {
-                Console.WriteLine(com.Name);
-            }
-            Console.WriteLine(c);
         }
 
         public async Task HandleCommand(SocketMessage parameterMessage)
@@ -37,33 +31,29 @@ namespace SandwichDeliveryBot.Handler
             var message = parameterMessage as SocketUserMessage;
             if (message == null) return;
             if (message.Author.IsBot) return;
-            Console.WriteLine("beep boop handled2");
             // Mark where the prefix ends and the command begins
             int argPos = 0;
             // Determine if the message has a valid prefix, adjust argPos 
             if (!(message.HasMentionPrefix(client.CurrentUser, ref argPos) || message.HasCharPrefix(';', ref argPos))) return;
-            Console.WriteLine("it works");
-            Console.WriteLine(message);
             // Create a Command Context
             var context = new CommandContext(client, message);
             // Execute the Command, store the result
             var result = await commands.ExecuteAsync(context, argPos, map);
-             Console.WriteLine("beep boop handled4");
             // If the command failed, notify the user
 
-            if (!result.IsSuccess)
-                await message.Channel.SendMessageAsync($"**Error:** {result.ErrorReason}");
             //if (!result.IsSuccess)
-            //{
-            //   if(result.ErrorReason.ToLower() == "unknown command.")
-            //   {
-            //      return;
-            //   }
-            //   else
-            //   {
-            //        await message.Channel.SendMessageAsync($"**Error:** {result.ErrorReason}");
-            //   }
-            //}
+            //    await message.Channel.SendMessageAsync($"**Error:** {result.ErrorReason}");
+            if (!result.IsSuccess)
+            {
+                if (result.ErrorReason.ToLower() == "unknown command.")
+                {
+                    return;
+                }
+                else
+                {
+                    await message.Channel.SendMessageAsync($"**Error:** {result.ErrorReason}");
+                }
+            }
 
             // Console.WriteLine("beep boop made it through");
         }
