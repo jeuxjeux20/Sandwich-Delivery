@@ -69,12 +69,15 @@ namespace SandwichDeliveryBot.Databases
                 {
                     case "user":
                         list.Type = ListingType.User;
+                        await SaveChangesAsync();
                         break;
                     case "server":
                         list.Type = ListingType.Guild;
+                        await SaveChangesAsync();
                         break;
                     case "guild":
                         list.Type = ListingType.Guild;
+                        await SaveChangesAsync();
                         break;
                     default:
                         break;
@@ -97,12 +100,15 @@ namespace SandwichDeliveryBot.Databases
                 {
                     case "user":
                         list.Type = ListingType.User;
+                        await SaveChangesAsync();
                         break;
                     case "server":
                         list.Type = ListingType.Guild;
+                        await SaveChangesAsync();
                         break;
                     case "guild":
                         list.Type = ListingType.Guild;
+                        await SaveChangesAsync();
                         break;
                     default:
                         break;
@@ -121,11 +127,11 @@ namespace SandwichDeliveryBot.Databases
                 switch (l.Type)
                 {
                     case ListingType.User:
-                        return "You have been blacklisted for "+l.Reason;
+                        return "You have been blacklisted for `"+l.Reason+"`.";
                     case ListingType.Guild:
-                        return "Your server has been blacklisted for "+l.Reason;
+                        return "Your server has been blacklisted for `"+l.Reason+"`.";
                     case ListingType.Undefined:
-                        return "Either you or this server has been blacklisted for " + l.Reason + ", If you wish to know for sure. Run `;server` and join the invite link.";
+                        return "Either you or this server has been blacklisted for reason: `" + l.Reason + "`, If you wish to know for sure. Run `;server` and join the invite link.";
                 }
             }
             else
