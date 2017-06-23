@@ -28,7 +28,7 @@ namespace SandwichDeliveryBot3.Services
 
         public string GenerateId(int Size)
         {
-            string input = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            string input = "123456789!@#$%^&*()";
             var random = new Random();
             var chars = Enumerable.Range(0, Size)
                                    .Select(x => input[random.Next(0, input.Length)]);
