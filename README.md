@@ -1,5 +1,5 @@
 # Sandwich-Delivery-Bot-2.0
-A ~~1400~~ 2200 line discord bot that delivers sandwiches to servers. Discord.Net 1.0 
+A ~~1400~~ ~~2200~~ 2209 line discord bot that delivers sandwiches to servers. Discord.Net 1.0 
 
 This bot has been such a fun thing to make.
 
