@@ -236,7 +236,7 @@ namespace SandwichDeliveryBot3.SandwichMod
         {
             foreach (var o in _LDB.Listings)
             {
-                await ReplyAsync($"{o.Name}, {o.Reason}, {o.Type}, {o.ID}, {o.Case}");
+                await ReplyAsync($"{o.Name}, {o.Type}, {o.ID}, {o.Case}");
             }
         }
 
@@ -246,10 +246,53 @@ namespace SandwichDeliveryBot3.SandwichMod
             await _LDB.EditListing(id, reason, type);
         }
 
-        [Command("editlisting")]
-        public async Task editListings(int casen, string type, [Remainder]string reason)
+        [Command("listinginfo")]
+        [Alias("li")]
+        public async Task listinginfo(ulong id)
         {
-            await _LDB.EditListing(casen, reason, type);
+            Listing[] list = await _LDB.GetArray();
+            Listing listing = list.FirstOrDefault(x => x.ID == id);
+            await ReplyAsync($"{Context.User.Mention} Here is your requested information!", embed: new EmbedBuilder()
+            .AddField(builder =>
+            {
+                builder.Name = "Name";
+                builder.Value = listing.Name;
+                builder.IsInline = true;
+            })
+            .AddField(builder =>
+            {
+                builder.Name = "Reason";
+                builder.Value = listing.Reason;
+                builder.IsInline = true;
+            })
+            .AddField(builder =>
+            {
+                builder.Name = "User ID";
+                builder.Value = listing.ID;
+                builder.IsInline = true;
+            })
+            .AddField(builder =>
+            {
+                builder.Name = "Type";
+                builder.Value = listing.Type;
+                builder.IsInline = true;
+            })
+            .AddField(builder =>
+            {
+                builder.Name = "Case number";
+                builder.Value = listing.Case;
+                builder.IsInline = true;
+            })
+             .AddField(builder =>
+             {
+                 builder.Name = "Date of listing";
+                 builder.Value = listing.Date;
+                 builder.IsInline = true;
+             })
+            .WithUrl("https://discord.gg/XgeZfE2")
+            .WithTitle("Listing information")
+            .WithTimestamp(DateTime.Now));
+
         }
 
         [Command("amiblacklisted")]
@@ -266,7 +309,7 @@ namespace SandwichDeliveryBot3.SandwichMod
      //   [NotBlacklisted]
         public async Task TotalOrders()
         {
-            await ReplyAsync($"We have proudly served {_SS.totalOrders} sandwiches since April 26th 2017.");
+            await ReplyAsync($"We have proudly served {_SS.totalOrders} sandwiches since June.");
         }
 
         [Command("credits")]
@@ -313,6 +356,7 @@ namespace SandwichDeliveryBot3.SandwichMod
              Gives you an invite to our server!!
          ");
         }
+
 
     }
 }
