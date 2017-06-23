@@ -1,7 +1,6 @@
-# Sandwich Delivery 3.0 Test Repo
-A ~~1400~~ 2200 line discord bot that delivers sandwiches to servers. Discord.Net 1.0 
+# Sandwich Delivery 3.0
 
-This bot has been such a fun thing to make.
+A discord bot that delivers sandwiches to Discord Servers...Yeah...It's pretty neat.
 
 Requires Discord.Net 1.0
 
