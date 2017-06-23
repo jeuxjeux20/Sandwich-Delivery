@@ -52,7 +52,6 @@ namespace SandwichDeliveryBot.ArtistMod
             await ReplyAsync($"{newartists} new Artists have been added.");
         }
 
-
         [Command("del")]
         [Alias("d")]
        // [NotBlacklisted]

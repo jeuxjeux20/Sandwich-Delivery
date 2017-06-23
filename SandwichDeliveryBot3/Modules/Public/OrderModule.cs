@@ -34,9 +34,9 @@ namespace SandwichDeliveryBot3.Modules.Public
 
         [Command("order")]
         [Alias("o")]
-        //[NotBlacklisted]
+        [NotBlacklisted]
         [Summary("Ogre!")]
-        //[RequireBotPermission(GuildPermission.CreateInstantInvite)]
+        [RequireBotPermission(GuildPermission.CreateInstantInvite)]
         public async Task Order([Remainder]string order)
         {
             Console.WriteLine("hi");
@@ -51,9 +51,9 @@ namespace SandwichDeliveryBot3.Modules.Public
 
                     try
                     {
-                        IGuild usr = await Context.Client.GetGuildAsync(322455281286119466); //Isn't there a better way to do these?
-                        ITextChannel usrc = await usr.GetTextChannelAsync(322455717254529034);
-                        ITextChannel usrclog = await usr.GetTextChannelAsync(322463971359588352);
+                        IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId); //Isn't there a better way to do these?
+                        ITextChannel usrc = await usr.GetTextChannelAsync(_SS.KitchenId);
+                        ITextChannel usrclog = await usr.GetTextChannelAsync(_SS.LogId);
 
                         orderid = _DB.GenerateId(5);
                         orderid = _DB.VerifyIdUniqueness(orderid);
@@ -120,7 +120,7 @@ namespace SandwichDeliveryBot3.Modules.Public
 
         [Command("delorder")]
         [Alias("delo")]
-       // [NotBlacklisted]
+        [NotBlacklisted]
         public async Task DelOrder()
         {
             using (Context.Channel.EnterTypingState())
@@ -130,8 +130,8 @@ namespace SandwichDeliveryBot3.Modules.Public
                 {
                     Sandwich order = await _DB.FindOrder(Context.User.Id);
                     await _DB.DelOrder(order.Id.ToLower());
-                    IGuild usr = await Context.Client.GetGuildAsync(322455281286119466);
-                    ITextChannel usrc = await usr.GetTextChannelAsync(322455717254529034);
+                    IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
+                    ITextChannel usrc = await usr.GetTextChannelAsync(_SS.KitchenId);
                     await usrc.SendMessageAsync($"Order `{order.Id}`,`{order.Desc}` has been **REMOVED**.");
                     await msg.ModifyAsync(x =>
                     {

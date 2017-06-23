@@ -86,6 +86,34 @@ namespace SandwichDeliveryBot.Databases
             }
         }
 
+
+        public async Task EditListing(ulong id, string r, string type)
+        {
+            Listing list = await Listings.FirstOrDefaultAsync(x => x.ID == id);
+            if (list != null)
+            {
+                list.Reason = r;
+                switch (type.ToLower())
+                {
+                    case "user":
+                        list.Type = ListingType.User;
+                        break;
+                    case "server":
+                        list.Type = ListingType.Guild;
+                        break;
+                    case "guild":
+                        list.Type = ListingType.Guild;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else
+            {
+                throw new CantFindInDatabaseException();
+            }
+        }
+
         public async Task<string> CheckForBlacklist(ulong id) {
             Listing l = await Listings.FirstOrDefaultAsync(x => x.ID == id);
             if (l != null)

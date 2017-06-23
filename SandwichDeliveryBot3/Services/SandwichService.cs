@@ -11,9 +11,9 @@ namespace SandwichDeliveryBot.SService
         public string date = "June 2017";
         public string updatename = "3.0";
         public string motd;
-        public ulong USRGuildId = 322455281286119466;
-        public ulong KitchenId = 322455717254529034;
-        public ulong LogId = 322463971359588352;
+        public ulong USRGuildId = 264222431172886529;
+        public ulong KitchenId = 264222431172886529;
+        public ulong LogId = 287990510428225537;
 
 
 

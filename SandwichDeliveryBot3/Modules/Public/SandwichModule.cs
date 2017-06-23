@@ -240,6 +240,18 @@ namespace SandwichDeliveryBot3.SandwichMod
             }
         }
 
+        [Command("editlisting")]
+        public async Task editListings(ulong id, string type, [Remainder]string reason)
+        {
+            await _LDB.EditListing(id, reason, type);
+        }
+
+        [Command("editlisting")]
+        public async Task editListings(int casen, string type, [Remainder]string reason)
+        {
+            await _LDB.EditListing(casen, reason, type);
+        }
+
         [Command("amiblacklisted")]
         public async Task amiblacklisted()
         {
