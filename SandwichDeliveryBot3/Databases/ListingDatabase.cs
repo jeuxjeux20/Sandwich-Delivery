@@ -3,14 +3,18 @@ using System;
 using System.IO;
 using SandwichDeliveryBot3.CustomClasses;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Discord.WebSocket;
 
 namespace SandwichDeliveryBot.Databases
 {
     public class ListingDatabase : DbContext
     {
         public DbSet<Listing> Listings { get; set; }
-        public ListingDatabase()
+        private IServiceProvider _provider;
+        public ListingDatabase(IServiceProvider provider)
         {
+            _provider = provider;
             Database.EnsureCreated();
         }
 
@@ -26,7 +30,9 @@ namespace SandwichDeliveryBot.Databases
 
         public async Task NewListing(ulong id, string n, string r, ListingType t = ListingType.Undefined)
         {
-            Listing list = new Listing(r, id, n, t);
+            DiscordSocketClient c = _provider.GetService<DiscordSocketClient>();
+            string u = c.GetUser(id).Username;
+            Listing list = new Listing(r, id, u ?? "Undefined", t);
             await Listings.AddAsync(list);
             await SaveChangesAsync();
         }
@@ -59,12 +65,13 @@ namespace SandwichDeliveryBot.Databases
             }
         }
 
-        public async Task EditListing(int casen, string r, string type)
+        public async Task EditListing(int casen, string n, string r, string type)
         {
             Listing list = await Listings.FirstOrDefaultAsync(x => x.Case == casen);
             if (list != null)
             {
                 list.Reason = r;
+                list.Name = n;
                 switch (type.ToLower())
                 {
                     case "user":
@@ -90,12 +97,13 @@ namespace SandwichDeliveryBot.Databases
         }
 
 
-        public async Task EditListing(ulong id, string r, string type)
+        public async Task EditListing(ulong id, string n, string r, string type)
         {
             Listing list = await Listings.FirstOrDefaultAsync(x => x.ID == id);
             if (list != null)
             {
                 list.Reason = r;
+                list.Name = n;
                 switch (type.ToLower())
                 {
                     case "user":
