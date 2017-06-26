@@ -46,28 +46,22 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Discord.Net.Commands, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Discord.Net.Commands.1.0.0-rc2-00698\lib\netstandard1.3\Discord.Net.Commands.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Discord.Net.Commands.1.0.0-rc3-00768\lib\netstandard1.1\Discord.Net.Commands.dll</HintPath>
     </Reference>
     <Reference Include="Discord.Net.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Discord.Net.Core.1.0.0-rc2-00698\lib\netstandard1.3\Discord.Net.Core.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Discord.Net.Core.1.0.0-rc3-00768\lib\net45\Discord.Net.Core.dll</HintPath>
     </Reference>
     <Reference Include="Discord.Net.Rest, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Discord.Net.Rest.1.0.0-rc2-00698\lib\netstandard1.3\Discord.Net.Rest.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Discord.Net.Rest.1.0.0-rc3-00768\lib\net45\Discord.Net.Rest.dll</HintPath>
     </Reference>
     <Reference Include="Discord.Net.Rpc, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Discord.Net.Rpc.1.0.0-rc2-00698\lib\netstandard1.3\Discord.Net.Rpc.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Discord.Net.Rpc.1.0.0-rc3-00768\lib\net45\Discord.Net.Rpc.dll</HintPath>
     </Reference>
     <Reference Include="Discord.Net.Webhook, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Discord.Net.Webhook.1.0.0-rc2-00698\lib\netstandard1.3\Discord.Net.Webhook.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Discord.Net.Webhook.1.0.0-rc3-00768\lib\netstandard1.1\Discord.Net.Webhook.dll</HintPath>
     </Reference>
     <Reference Include="Discord.Net.WebSocket, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Discord.Net.WebSocket.1.0.0-rc2-00698\lib\netstandard1.3\Discord.Net.WebSocket.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\packages\Discord.Net.WebSocket.1.0.0-rc3-00768\lib\net45\Discord.Net.WebSocket.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0-beta1\lib\net45\EntityFramework.dll</HintPath>
@@ -138,9 +132,8 @@
     <Reference Include="Microsoft.Win32.Primitives, Version=4.0.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Win32.Primitives.4.3.0\lib\net46\Microsoft.Win32.Primitives.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Remotion.Linq, Version=2.1.0.0, Culture=neutral, PublicKeyToken=fee00910d6e5f53b, processorArchitecture=MSIL">
       <HintPath>..\packages\Remotion.Linq.2.1.1\lib\net45\Remotion.Linq.dll</HintPath>
@@ -313,6 +306,7 @@
     <Compile Include="CustomClasses\Conversation\ConversationGuild.cs" />
     <Compile Include="CustomClasses\Conversation\ConversationUser.cs" />
     <Compile Include="Databases\ConversationDatabase.cs" />
+    <Compile Include="Enums\ArtistStatChange.cs" />
     <Compile Include="Enums\ConversationType.cs" />
     <Compile Include="CustomClasses\Conversation\Conversation.cs" />
     <Compile Include="CustomClasses\Listing.cs" />

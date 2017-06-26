@@ -8,6 +8,7 @@ using SandwichDeliveryBot.SService;
 using SandwichDeliveryBot.OrderStatusEnum;
 using SandwichDeliveryBot3.Precons;
 using SandwichDeliveryBot3.CustomClasses;
+using SandwichDeliveryBot3.Enums;
 
 namespace SandwichDeliveryBot3.Modules.Public
 {
@@ -55,13 +56,13 @@ namespace SandwichDeliveryBot3.Modules.Public
                         ITextChannel usrc = await usr.GetTextChannelAsync(_SS.KitchenId);
                         ITextChannel usrclog = await usr.GetTextChannelAsync(_SS.LogId);
 
-                        orderid = _DB.GenerateId(5);
+                        orderid = _DB.GenerateId(3);
                         orderid = _DB.VerifyIdUniqueness(orderid);
 
                         var neworder = _DB.NewOrder(order, orderid, DateTime.Now, OrderStatus.Waiting, Context);
 
                         var builder = new EmbedBuilder();
-                        builder.ThumbnailUrl = Context.User.GetAvatarUrl();
+                        builder.ThumbnailUrl = new Uri(Context.User.GetAvatarUrl());
                         builder.Title = $" New order from {Context.Guild.Name}(`{Context.Guild.Id}`)";
                         var desc = $"Ordered by: **{Context.User.Username}**#**{Context.User.Discriminator}**(`{Context.User.Id}`)\n" +
                            $"Channel: `{Context.Channel.Name}`\n" +
@@ -74,6 +75,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                             x.Text = "Is this order abusive? Please tell Lemon or Fires immediately!";
                         });
                         builder.Timestamp = DateTime.Now;
+                        _SS.totalOrders += 1;
 
                         var artist = usr.Roles.FirstOrDefault(x => x.Name.ToLower() == "sandwich artists"); //FIX
                         if (artist != null)
@@ -94,7 +96,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                         return;
                     }
 
-                    IDMChannel dm = await Context.User.CreateDMChannelAsync();
+                    IDMChannel dm = await Context.User.GetOrCreateDMChannelAsync();
                     IUserMessage m = await ReplyAsync(":thumbsup:");
                     try
                     {
@@ -133,6 +135,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                     IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
                     ITextChannel usrc = await usr.GetTextChannelAsync(_SS.KitchenId);
                     await usrc.SendMessageAsync($"Order `{order.Id}`,`{order.Desc}` has been **REMOVED**.");
+                    _SS.totalOrders -= 1;
                     await msg.ModifyAsync(x =>
                     {
                         x.Content = "Successfully deleted order!";
@@ -169,27 +172,27 @@ namespace SandwichDeliveryBot3.Modules.Public
                     ITextChannel ch = await s.GetTextChannelAsync(o.ChannelId);
                     IGuildUser u = await s.GetUserAsync(o.UserId);
 
-                    IDMChannel dm = await u.CreateDMChannelAsync();
+                    IDMChannel dm = await u.GetOrCreateDMChannelAsync();
                     var builder = new EmbedBuilder();
 
-                    builder.ThumbnailUrl = Context.User.GetAvatarUrl();
+                    builder.ThumbnailUrl = new Uri(Context.User.GetAvatarUrl());
                     builder.Title = $"Your order has been accepted by {Context.User.Username}#{Context.User.Discriminator}!";
                     var desc = $"```{o.Desc}```\n" +
                                $"Id: `{o.Id}`\n" +
                                $"**Watch this chat for an updates on when it is on it's way! It is ready for delivery!";
                     builder.Description = desc;
                     builder.Color = new Color(36, 78, 145);
-                    builder.Url = "https://discord.gg/XgeZfE2";
+                    builder.Url = new Uri("https://discord.gg/XgeZfE2");
                     builder.WithFooter(x =>
                     {
-                        x.IconUrl = u.GetAvatarUrl();
+                        x.IconUrl = new Uri(u.GetAvatarUrl()); 
                         x.Text = $"Ordered at: {o.date}.";
                     });
                     builder.Timestamp = DateTime.UtcNow;
                     o.Status = OrderStatus.ReadyToDeliver;
                     o.ArtistId = Context.User.Id;
-                    a.ordersAccepted += 1;
-                    await dm.SendMessageAsync("", embed: builder);
+                    await _ADB.ChangeAcceptCount(a, ArtistStatChange.Increase);
+                    await dm.SendMessageAsync(" ", embed: builder);
                 }
                 catch (Exception e)
                 {
@@ -220,13 +223,13 @@ namespace SandwichDeliveryBot3.Modules.Public
                         IGuild s = await Context.Client.GetGuildAsync(o.GuildId);
                         ITextChannel ch = await s.GetTextChannelAsync(o.ChannelId);
                         IGuildUser u = await s.GetUserAsync(o.UserId);
-                        IDMChannel dm = await u.CreateDMChannelAsync();
+                        IDMChannel dm = await u.GetOrCreateDMChannelAsync();
 
                         IInvite inv = await ch.CreateInviteAsync(0, 1, false, true);
-                        IDMChannel artistdm = await Context.User.CreateDMChannelAsync();
+                        IDMChannel artistdm = await Context.User.GetOrCreateDMChannelAsync();
 
                         var builder = new EmbedBuilder();
-                        builder.ThumbnailUrl = o.AvatarUrl;
+                        builder.ThumbnailUrl = new Uri(o.AvatarUrl);
                         builder.Title = $"Your order is being delivered by {Context.User.Username}#{Context.User.Discriminator}!";
                         var desc = $"```{o.Desc}```\n" +
                                    $"**Incoming sandwich! Watch {o.GuildName}!**";
@@ -234,7 +237,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                         builder.Color = new Color(163, 198, 255);
                         builder.WithFooter(x =>
                         {
-                            x.IconUrl = u.GetAvatarUrl();
+                            x.IconUrl = new Uri(u.GetAvatarUrl());
                             x.Text = $"Ordered at: {o.date}.";
                         });
                         builder.Timestamp = DateTime.UtcNow;
@@ -244,7 +247,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                         o.Status = OrderStatus.Delivered;
                         await _DB.DelOrder(id);
 
-                        a.ordersDelivered += 1;
+                        await _ADB.ChangeDeliverCount(a, ArtistStatChange.Increase);
                         //await e.Channel.SendMessage("The Order has been completed and removed from the system. You cannot go back now!");
 
                     }
@@ -276,10 +279,12 @@ namespace SandwichDeliveryBot3.Modules.Public
                 IGuild s = await Context.Client.GetGuildAsync(order.GuildId);
                 ITextChannel ch = await s.GetTextChannelAsync(order.ChannelId);
                 IGuildUser u = await s.GetUserAsync(order.UserId);
-                IDMChannel dm = await u.CreateDMChannelAsync();
+                IDMChannel dm = await u.GetOrCreateDMChannelAsync();
+                Artist a = await _ADB.FindArtist(Context.User.Id);
+                await _ADB.ChangeAcceptCount(a, ArtistStatChange.Decrease);
                 await dm.SendMessageAsync($"Your sandwich order has been denied! ", embed: new EmbedBuilder()
-                    .WithThumbnailUrl(Context.User.GetAvatarUrl())
-                    .WithUrl("https://discord.gg/XgeZfE2")
+                    .WithThumbnailUrl(new Uri(Context.User.GetAvatarUrl()))
+                    .WithUrl(new Uri("https://discord.gg/XgeZfE2"))
                     .AddField(builder =>
                     {
                         builder.Name = "Order:";
@@ -390,9 +395,9 @@ namespace SandwichDeliveryBot3.Modules.Public
                      builder.Value = order.Status;
                      builder.IsInline = true;
                  })
-                .WithUrl("https://discord.gg/XgeZfE2")
+                .WithUrl(new Uri("https://discord.gg/XgeZfE2"))
                 .WithColor(c)
-                .WithThumbnailUrl(order.AvatarUrl)
+                .WithThumbnailUrl(new Uri(order.AvatarUrl))
                 .WithTitle("Order information")
                 .WithTimestamp(DateTime.Now));
             
@@ -411,7 +416,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                     ITextChannel usrc = await usr.GetTextChannelAsync(306941357795311617);
 
                     var builder = new EmbedBuilder();
-                    builder.ThumbnailUrl = Context.User.GetAvatarUrl();
+                    builder.ThumbnailUrl = new Uri(Context.User.GetAvatarUrl());
                     builder.Title = $"New feedback from {Context.User.Username}#{Context.User.Discriminator}(`{Context.User.Id}`)";
                     var desc = $"{f}";
                     builder.Description = desc;

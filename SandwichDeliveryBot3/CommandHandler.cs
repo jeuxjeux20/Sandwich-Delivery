@@ -3,6 +3,7 @@ using System.Reflection;
 using Discord.Commands;
 using Discord.WebSocket;
 using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SandwichDeliveryBot.Handler
 {
@@ -10,19 +11,16 @@ namespace SandwichDeliveryBot.Handler
     {
         private CommandService commands;
         private DiscordSocketClient client;
-        private IDependencyMap map;
+        private IServiceProvider _provider;
 
-        public async Task Install(IDependencyMap _map)
+        public async Task Install(IServiceProvider provider)
         {
-            // Create Command Service, inject it into Dependency Map
-            client = _map.Get<DiscordSocketClient>();
-            commands = new CommandService();
-            //_map.Add(commands);
-            map = _map;
-            await commands.AddModulesAsync(Assembly.GetEntryAssembly());
+            _provider = provider;
 
+            client = _provider.GetService<DiscordSocketClient>();
+            commands = _provider.GetService<CommandService>();
+            await commands.AddModulesAsync(Assembly.GetEntryAssembly());
             client.MessageReceived += HandleCommand;
-            //Console.WriteLine("installed ");
         }
 
         public async Task HandleCommand(SocketMessage parameterMessage)
@@ -38,7 +36,7 @@ namespace SandwichDeliveryBot.Handler
             // Create a Command Context
             var context = new CommandContext(client, message);
             // Execute the Command, store the result
-            var result = await commands.ExecuteAsync(context, argPos, map);
+            var result = await commands.ExecuteAsync(context, argPos, _provider);
             // If the command failed, notify the user
 
             //if (!result.IsSuccess)

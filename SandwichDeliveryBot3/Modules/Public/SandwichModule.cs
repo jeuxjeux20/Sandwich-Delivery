@@ -164,17 +164,18 @@ namespace SandwichDeliveryBot3.SandwichMod
         [RequireBlacklist]
         public async Task Blacklist(ulong id, string name = "Undefined", [Remainder]string reason = "No reason given.")
         {
-          
-            Artist a = await _ADB.FindArtist(Context.User.Id);
-            if (a != null)
-            {
-                await _LDB.NewListing(id, name, reason);
-                IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
-                ITextChannel usrc = await usr.GetTextChannelAsync(_SS.LogId);
-                await usrc.SendMessageAsync($"{Context.User.Mention} blacklisted <@{id}> for `{reason}`(id).");
-                await ReplyAsync(":thumbsup:");
+
+                Artist a = await _ADB.FindArtist(Context.User.Id);
+                if (a != null)
+                {
+                    await _LDB.NewListing(id, name, reason);
+                    IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
+                    ITextChannel usrc = await usr.GetTextChannelAsync(_SS.LogId);
+                    await usrc.SendMessageAsync($"{Context.User.Mention} blacklisted <@{id}> for `{reason}`(id).");
+                    await ReplyAsync(":thumbsup:");
+                }
             }
-        }
+
 
         [Command("blacklist")]
         [Alias("b")]
@@ -241,9 +242,9 @@ namespace SandwichDeliveryBot3.SandwichMod
         }
 
         [Command("editlisting")]
-        public async Task editListings(ulong id, string type, [Remainder]string reason)
+        public async Task editListings(ulong id, string name, string type, [Remainder]string reason)
         {
-            await _LDB.EditListing(id, reason, type);
+            await _LDB.EditListing(id, name,reason, type);
             IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
             ITextChannel usrc = await usr.GetTextChannelAsync(_SS.LogId);
             await usrc.SendMessageAsync($"{Context.User.Mention} edited listing, {id}, {type}, {reason}.");
@@ -293,7 +294,7 @@ namespace SandwichDeliveryBot3.SandwichMod
                  builder.Value = listing.Date;
                  builder.IsInline = true;
              })
-            .WithUrl("https://discord.gg/XgeZfE2")
+            .WithUrl(new Uri("https://discord.gg/XgeZfE2"))
             .WithTitle("Listing information")
             .WithTimestamp(DateTime.Now));
 
