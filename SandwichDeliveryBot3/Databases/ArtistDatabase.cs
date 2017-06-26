@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Discord;
 using SandwichDeliveryBot3.CustomClasses;
+using SandwichDeliveryBot3.Enums;
 
 namespace SandwichDeliveryBot.Databases
 {
@@ -54,6 +55,38 @@ namespace SandwichDeliveryBot.Databases
             }
             else
                 throw new CantFindInDatabaseException();
+        }
+        public async Task ChangeAcceptCount(Artist a, ArtistStatChange c)
+        {
+            switch (c)
+            {
+                case ArtistStatChange.Decrease:
+                    Artist temp = await Artists.FirstOrDefaultAsync(x => x.ArtistId == a.ArtistId);
+                    temp.ordersAccepted -= 1;
+                    await SaveChangesAsync();
+                    break;
+                case ArtistStatChange.Increase:
+                    temp = await Artists.FirstOrDefaultAsync(x => x.ArtistId == a.ArtistId);
+                    temp.ordersAccepted += 1;
+                    await SaveChangesAsync();
+                    break;
+            }
+        }
+        public async Task ChangeDeliverCount(Artist a, ArtistStatChange c)
+        {
+            switch (c)
+            {
+                case ArtistStatChange.Decrease:
+                    Artist temp = await Artists.FirstOrDefaultAsync(x => x.ArtistId == a.ArtistId);
+                    temp.ordersDelivered -= 1;
+                    await SaveChangesAsync();
+                    break;
+                case ArtistStatChange.Increase:
+                    temp = await Artists.FirstOrDefaultAsync(x => x.ArtistId == a.ArtistId);
+                    temp.ordersDelivered += 1;
+                    await SaveChangesAsync();
+                    break;
+            }
         }
         public async Task DelArtistAsync(Artist artist)
         {
