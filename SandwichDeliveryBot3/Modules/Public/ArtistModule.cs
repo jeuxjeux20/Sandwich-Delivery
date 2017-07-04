@@ -11,20 +11,24 @@ using SandwichDeliveryBot.ArtistStatusEnum;
 using SandwichDeliveryBot.Databases;
 using SandwichDeliveryBot3.Precons;
 using SandwichDeliveryBot3.CustomClasses;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SandwichDeliveryBot.ArtistMod
 {
     [Group("artist")]
     public class ArtistModule : ModuleBase
     {
+        SandwichService _SS;
+        SandwichDatabase _DB;
+        ArtistDatabase _ADB;
+        ListingDatabase _LDB;
 
-        SandwichService SS;
-        ArtistDatabase ADB;
-
-        public ArtistModule(SandwichService s, ArtistDatabase adb)
+        public ArtistModule(IServiceProvider provider)
         {
-            SS = s;
-            ADB = adb;
+            _SS = provider.GetService<SandwichService>();
+            _DB = provider.GetService<SandwichDatabase>();
+            _ADB = provider.GetService<ArtistDatabase>();
+            _LDB = provider.GetService<ListingDatabase>();
         }
 
         [Command("new")]
@@ -36,12 +40,12 @@ namespace SandwichDeliveryBot.ArtistMod
             int newartists = 0;
             foreach (var artist in artists)
             {
-                Artist a = await ADB.FindArtist(artist);
+                Artist a = await _ADB.FindArtist(artist);
                 if (a == null)
                 {
-                    Artist r = await ADB.FindArtist(Context.User.Id);
+                    Artist r = await _ADB.FindArtist(Context.User.Id);
                     string n = string.Format(artist.Username + "#" + artist.Discriminator);
-                    await ADB.NewArtist(artist, DateTime.Now.ToString("MMMM dd, yyyy"));
+                    await _ADB.NewArtist(artist, DateTime.Now.ToString("MMMM dd, yyyy"));
                     newartists++;
                 }
                 else
@@ -53,7 +57,7 @@ namespace SandwichDeliveryBot.ArtistMod
         }
 
         [Command("del")]
-        [Alias("d")]
+        [Alias("del")]
         [NotBlacklisted]
         [RequireBlacklist]
         public async Task DeleteArtist(params IGuildUser[] artists)
@@ -61,10 +65,10 @@ namespace SandwichDeliveryBot.ArtistMod
             int deletedartist = 0;
             foreach (var artist in artists)
             {
-                Artist a = await ADB.FindArtist(artist);
+                Artist a = await _ADB.FindArtist(artist);
                 if (a != null)
                 {
-                    await ADB.DelArtistAsync(a);
+                    await _ADB.DelArtistAsync(a);
                     deletedartist++;
                 }
                 else
@@ -82,9 +86,9 @@ namespace SandwichDeliveryBot.ArtistMod
             int updatedusers = 0;
             foreach (var artist in user)
             {
-                var a = await ADB.FindArtist(artist);
+                var a = await _ADB.FindArtist(artist);
                 a.canBlacklist = true;
-                await ADB.SaveChangesAsync();
+                await _ADB.SaveChangesAsync();
                 updatedusers++;
             }
             await ReplyAsync($":thumbsup:, {updatedusers} Artists have been given Administrator control over the bot.");
@@ -98,47 +102,176 @@ namespace SandwichDeliveryBot.ArtistMod
         {
             foreach (var chef in chefs)
             {
-                Artist a = await ADB.FindArtist(chef);
-                switch (a.status)
+                Artist a = await _ADB.FindArtist(chef);
+                string s = a.status.ToString();
+                int v = (int)a.status;
+                if (v != 5)
+                    v += 1;
+                else
+                { await ReplyAsync($"You cannot promote {a.ArtistName} past the max Artist rank.");  return; }
+                a.status = (ArtistStatus)v;
+                await ReplyAsync($"Promoted User {chef.Username}#{chef.Discriminator} from {s} to {a.status}");
+                await _ADB.SaveChangesAsync();
+            }
+        }
+
+        [Command("demote")]
+        [NotBlacklisted]
+        [Alias("dem")]
+        [RequireBlacklist]
+        public async Task DemoteArtist(params IGuildUser[] chefs)
+        {
+            foreach (var chef in chefs)
+            {
+                Artist a = await _ADB.FindArtist(chef);
+                string s = a.status.ToString();
+                int v = (int)a.status;
+
+                if (v == 0)
                 {
-                    case ArtistStatus.Trainee:
-                        a.status = ArtistStatus.Artist;
-                        await ReplyAsync($"Promoted {chef.Username}#{chef.Discriminator} from Trainee to Sandwich Artist");
-                        break;
-                    case ArtistStatus.Artist:
-                        a.status = ArtistStatus.MasterArtist;
-                        await ReplyAsync($"Promoted {chef.Username}#{chef.Discriminator} from Artist to Master Sandwich Artist");
-                        break;
-                    case ArtistStatus.MasterArtist:
-                        a.status = ArtistStatus.GodArtist;
-                        await ReplyAsync($"Promoted {chef.Username}#{chef.Discriminator} from Master Sandwich Artist to **GOD** Sandwich Artist");
-                        break;
-                    case ArtistStatus.GodArtist:
-                        await ReplyAsync("You cannot promote a user past God Sandwich Artist!");
-                        break;
+                    await ReplyAsync("This user is already the lowest available rank, Consider deleting them from the database.");
+                    return;
                 }
-                await ADB.SaveChangesAsync();
+                else
+                {
+                    v -= 1;
+                }
+
+                a.status = (ArtistStatus)v;
+                await ReplyAsync($"Demoted User {chef.Username}#{chef.Discriminator} from {s} to {a.status}");
+                await _ADB.SaveChangesAsync();
             }
         }
 
 
         [Command("stats")]
-        [Alias("d")]
+        [Alias("info")]
         [NotBlacklisted]
         public async Task GetDeliveries(params IGuildUser[] artistss)
         {
             foreach (var chef in artistss)
             {
-                Artist c = await ADB.FindArtist(chef);
-                await ReplyAsync($"{chef.Mention} has accepted `{c.ordersAccepted}` orders and delivered `{c.ordersDelivered}`. They have been working here since `{c.HiredDate}` and have the `{c.status}` rank. Their blacklist ability is set to {c.canBlacklist}.");
+                Artist a = await _ADB.FindArtist(chef);
+                Color c = new Color(54, 219, 148);
+                await ReplyAsync($"{Context.User.Mention} Here is your requested information!", embed: new EmbedBuilder()
+                .AddField(builder =>
+                {
+                    builder.Name = "**User**";
+                    builder.Value = a.ArtistName+"#"+a.ArtistDistin;
+                    builder.IsInline = true;
+                })
+                .AddField(builder =>
+                {
+                    builder.Name = "Tips Recieved";
+                    builder.Value = a.tipsRecieved;
+                    builder.IsInline = true;
+                })
+                   .AddField(builder =>
+                   {
+                       builder.Name = "Rank";
+                       var val = a.status.ToString();
+                       builder.Value = string.Concat(val.Select(x => Char.IsUpper(x) ? " " + x : x.ToString())).TrimStart(' ');
+                       builder.IsInline = true;
+                   })
+                .AddField(builder =>
+                {
+                    builder.Name = "Orders Accepted";
+                    builder.Value = a.ordersAccepted;
+                    builder.IsInline = true;
+                })
+                .AddField(builder => //todo
+                {
+                    builder.Name = "Orders Denied";
+                    builder.Value = a.ordersDenied;
+                    builder.IsInline = true;
+                })
+                .AddField(builder =>
+                {
+                    builder.Name = "Most Recent Order";
+                    builder.Value = a.lastOrder;
+                    builder.IsInline = true;
+                })
+                 .AddField(builder =>
+                 {
+                     builder.Name = "Date Hired";
+                     builder.Value = a.HiredDate;
+                     builder.IsInline = true;
+                 })
+                .WithUrl(new Uri("https://discord.gg/XgeZfE2"))
+                .WithColor(c)
+                .WithTitle("User information")
+                .WithTimestamp(DateTime.Now));
             }
+        }
+
+        [Command("stats")]
+        [Alias("info")]
+        [NotBlacklisted]
+        public async Task GetDeliveries(string ar)
+        {
+                Artist a = await _ADB.FindArtist(ar);
+                Color c = new Color(54, 219, 148);
+                await ReplyAsync($"{Context.User.Mention} Here is your requested information!", embed: new EmbedBuilder()
+                .AddField(builder =>
+                {
+                    builder.Name = "**User**";
+                    builder.Value = a.ArtistName + "#" + a.ArtistDistin;
+                    builder.IsInline = true;
+                })
+                .AddField(builder =>
+                {
+                    builder.Name = "Tips Recieved";
+                    builder.Value = a.tipsRecieved;
+                    builder.IsInline = true;
+                })
+                 .AddField(builder =>
+                 {
+                     builder.Name = "Rank";
+                     var val = a.status.ToString();
+                     builder.Value = string.Concat(val.Select(x => Char.IsUpper(x) ? " " + x : x.ToString())).TrimStart(' ');
+                     builder.IsInline = true;
+                 })
+                .AddField(builder =>
+                {
+                    builder.Name = "Orders Accepted";
+                    builder.Value = a.ordersAccepted;
+                    builder.IsInline = true;
+                })
+                .AddField(builder =>
+                {
+                    builder.Name = "Orders Denied";
+                    builder.Value = a.ordersDenied;
+                    builder.IsInline = true;
+                })
+                .AddField(builder =>
+                {
+                    builder.Name = "Admin?";
+                    builder.Value = a.canBlacklist;
+                    builder.IsInline = true;
+                })
+                .AddField(builder =>
+                {
+                    builder.Name = "Most Recent Order";
+                    builder.Value = a.lastOrder;
+                    builder.IsInline = true;
+                })
+                 .AddField(builder =>
+                 {
+                     builder.Name = "Date Hired";
+                     builder.Value = a.HiredDate;
+                     builder.IsInline = true;
+                 })
+                .WithUrl(new Uri("https://discord.gg/XgeZfE2"))
+                .WithColor(c)
+                .WithTitle("User information")
+                .WithTimestamp(DateTime.Now));
         }
 
         [Command("list")]
         [NotBlacklisted]
         public async Task listImproved()
         {
-            var result = string.Join(", \r\n", ADB.Artists.Select(x => string.Format("{0}, {1}", x.ArtistName, x.status)).ToArray());
+            var result = string.Join(", \r\n", _ADB.Artists.Select(x => string.Format("{0}, {1}", x.ArtistName, x.status)).ToArray());
             await ReplyAsync(result);
         }
     }
