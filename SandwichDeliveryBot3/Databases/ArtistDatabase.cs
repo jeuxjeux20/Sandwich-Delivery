@@ -37,7 +37,11 @@ namespace SandwichDeliveryBot.Databases
             var a = await Artists.FirstOrDefaultAsync(x => x.ArtistId == user.Id);
             if (a != null) { return a; } else { return null; }
         }
-
+        public async Task<Artist> FindArtist(string name)
+        {
+            var a = await Artists.FirstOrDefaultAsync(x => x.ArtistName+"#"+x.ArtistDistin == name);
+            if (a != null) { return a; } else { return null; }
+        }
         public async Task NewArtist(IGuildUser user, string now)
         {
             Artist a = new Artist(user, now);
@@ -61,32 +65,19 @@ namespace SandwichDeliveryBot.Databases
             switch (c)
             {
                 case ArtistStatChange.Decrease:
-                    Artist temp = await Artists.FirstOrDefaultAsync(x => x.ArtistId == a.ArtistId);
-                    temp.ordersAccepted -= 1;
-                    await SaveChangesAsync();
                     break;
                 case ArtistStatChange.Increase:
-                    temp = await Artists.FirstOrDefaultAsync(x => x.ArtistId == a.ArtistId);
+                   Artist temp = await Artists.FirstOrDefaultAsync(x => x.ArtistId == a.ArtistId);
                     temp.ordersAccepted += 1;
                     await SaveChangesAsync();
                     break;
             }
         }
-        public async Task ChangeDeliverCount(Artist a, ArtistStatChange c)
+        public async Task ChangeDenyCount(Artist a)
         {
-            switch (c)
-            {
-                case ArtistStatChange.Decrease:
-                    Artist temp = await Artists.FirstOrDefaultAsync(x => x.ArtistId == a.ArtistId);
-                    temp.ordersDelivered -= 1;
-                    await SaveChangesAsync();
-                    break;
-                case ArtistStatChange.Increase:
-                    temp = await Artists.FirstOrDefaultAsync(x => x.ArtistId == a.ArtistId);
-                    temp.ordersDelivered += 1;
-                    await SaveChangesAsync();
-                    break;
-            }
+            Artist temp = await Artists.FirstOrDefaultAsync(x => x.ArtistId == a.ArtistId);
+            temp.ordersDenied += 1;
+            await SaveChangesAsync();
         }
         public async Task DelArtistAsync(Artist artist)
         {
@@ -108,6 +99,11 @@ namespace SandwichDeliveryBot.Databases
             }
             else
                 throw new CantFindInDatabaseException();
+        }
+        public async Task UpdateMostRecentOrder(Artist a)
+        {
+            a.lastOrder = DateTime.Now;
+            await SaveChangesAsync();
         }
     }
 }

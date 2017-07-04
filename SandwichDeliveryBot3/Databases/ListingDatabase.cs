@@ -31,8 +31,7 @@ namespace SandwichDeliveryBot.Databases
         public async Task NewListing(ulong id, string n, string r, ListingType t = ListingType.Undefined)
         {
             DiscordSocketClient c = _provider.GetService<DiscordSocketClient>();
-            string u = c.GetUser(id).Username;
-            Listing list = new Listing(r, id, u ?? "Undefined", t);
+            Listing list = new Listing(r, id,"Undefined", t);
             await Listings.AddAsync(list);
             await SaveChangesAsync();
         }
