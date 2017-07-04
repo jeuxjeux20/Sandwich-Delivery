@@ -23,7 +23,12 @@ namespace SandwichDeliveryBot.UtilityMod
         {
             _udb = provider.GetService<UserDatabase>();
         }
-
+        [Command("toggleusertype")]
+        [RequireBlacklist]
+        public async Task changeOrders(IGuildUser user)
+        {
+            await _udb.ToggleUserType(user.Id);
+        }
         [Command("changeorders")]
         [RequireBlacklist]
         public async Task changeOrders(IGuildUser user, int diff)

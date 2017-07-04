@@ -42,11 +42,6 @@ namespace SandwichDeliveryBot.Handler
             if (a == null)
             {
                 await _udb.CreateNewUser(message.Author);
-                var art = _adb.FindArtist(message.Author.Id);
-                if (art != null)
-                {
-                   await _udb.ToggleUserType(message.Author.Id);
-                }
             }
             if (!result.IsSuccess)
             {
