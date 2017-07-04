@@ -57,7 +57,12 @@ namespace SandwichDeliveryBot.UtilityMod
             else
                 u = await _udb.FindUser(user.Id);
 
-            Color c = new Color(54, 219, 148);
+            Color c;
+            if(u.IsBlacklisted)
+                 c = new Color(198, 0, 53);
+            else
+                c = new Color(54, 219, 148);
+       
             await ReplyAsync($"{Context.User.Mention} Here is your requested information!", embed: new EmbedBuilder()
             .AddField(builder =>
             {

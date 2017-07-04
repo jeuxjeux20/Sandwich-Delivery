@@ -167,16 +167,19 @@ namespace SandwichDeliveryBot3.SandwichMod
         [RequireBlacklist]
         public async Task Blacklist(ulong id, string name = "Undefined", [Remainder]string reason = "No reason given.")
         {
-
                 Artist a = await _ADB.FindArtist(Context.User.Id);
                 if (a != null)
                 {
+                    SandwichUser u = await _UDB.FindUser(id);
+                    u.IsBlacklisted = true;
+                    await _UDB.SaveChangesAsync();
                     await _LDB.NewListing(id, name, reason);
                     IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
                     ITextChannel usrc = await usr.GetTextChannelAsync(_SS.LogId);
                     await usrc.SendMessageAsync($"{Context.User.Mention} blacklisted <@{id}> for `{reason}`(id).");
                     await ReplyAsync(":thumbsup:");
                 }
+
             }
 
 
@@ -188,6 +191,9 @@ namespace SandwichDeliveryBot3.SandwichMod
             Artist a = await _ADB.FindArtist(Context.User.Id);
             if (a != null)
             {
+                SandwichUser u = await _UDB.FindUser(user.Id);
+                u.IsBlacklisted = true;
+                await _UDB.SaveChangesAsync();
                 await _LDB.NewListing(user.Id, user.Username, reason);
                 IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
                 ITextChannel usrc = await usr.GetTextChannelAsync(_SS.LogId);
@@ -201,6 +207,9 @@ namespace SandwichDeliveryBot3.SandwichMod
         [RequireBlacklist]
         public async Task removeFromBlacklist(ulong id)
         {
+            SandwichUser u = await _UDB.FindUser(id);
+            u.IsBlacklisted = false;
+            await _UDB.SaveChangesAsync();
             await _LDB.RemoveListing(id);
             IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
             ITextChannel usrc = await usr.GetTextChannelAsync(_SS.LogId);
@@ -211,23 +220,12 @@ namespace SandwichDeliveryBot3.SandwichMod
         [Command("unblacklist")]
         [Alias("ub")]
         [RequireBlacklist]
-        public async Task removeFromBlacklist(int casen)
-        {
-            Listing[] a = await _LDB.GetArray();
-            Listing list = a.FirstOrDefault(x => x.Case == casen);
-            await _LDB.RemoveListing(casen);
-            IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
-            ITextChannel usrc = await usr.GetTextChannelAsync(_SS.LogId);
-            await usrc.SendMessageAsync($"{Context.User.Mention} unblacklisted <@{list.ID}>(case).");
-            await ReplyAsync(":thumbsup:");
-        }
-
-        [Command("unblacklist")]
-        [Alias("ub")]
-        [RequireBlacklist]
         public async Task removeFromBlacklist(IGuildUser user)
         {
             await _LDB.RemoveListing(user.Id);
+            SandwichUser u = await _UDB.FindUser(user.Id);
+            u.IsBlacklisted = false;
+            await _UDB.SaveChangesAsync();
             IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
             ITextChannel usrc = await usr.GetTextChannelAsync(_SS.LogId);
             await usrc.SendMessageAsync($"{Context.User.Mention} unblacklisted <@{user.Id}>(user).");
@@ -244,12 +242,38 @@ namespace SandwichDeliveryBot3.SandwichMod
         }
 
         [Command("editlisting")]
+        [RequireBlacklist]
         public async Task editListings(ulong id, string name, string type, [Remainder]string reason)
         {
-            await _LDB.EditListing(id, name,reason, type);
+            await _LDB.EditListing(id, name, reason, type);
             IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
             ITextChannel usrc = await usr.GetTextChannelAsync(_SS.LogId);
-            await usrc.SendMessageAsync($"{Context.User.Mention} edited listing, {id}, {type}, {reason}.");
+            await usrc.SendMessageAsync($"{Context.User.Mention} edited listing, `{id}`, `{type}`, `{reason}`.");
+            await ReplyAsync(":thumbsup:");
+        }
+
+        [Command("editlistingname")]
+        [RequireBlacklist]
+        public async Task editListingName(ulong id, string name)
+        {
+            Listing[] array = await _LDB.GetArray();
+            string cas = array.FirstOrDefault(x => x.ID == id).Name;
+            await _LDB.EditListing(id, name);
+            IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
+            ITextChannel usrc = await usr.GetTextChannelAsync(_SS.LogId);
+            await usrc.SendMessageAsync($"{Context.User.Mention} edited name listing, `{id}`, from `{cas}` to `{name}`.");
+            await ReplyAsync(":thumbsup:");
+        }
+        [Command("editlistingcase")]
+        [RequireBlacklist]
+        public async Task editListingCase(ulong id, int c)
+        {
+            Listing[] array = await _LDB.GetArray();
+            string cas = array.FirstOrDefault(x=>x.ID == id).Case.ToString();
+            await _LDB.EditListing(id, c);
+            IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
+            ITextChannel usrc = await usr.GetTextChannelAsync(_SS.LogId);
+            await usrc.SendMessageAsync($"{Context.User.Mention} edited case listing, `{id}`, from `{cas}` to `{c}`.");
             await ReplyAsync(":thumbsup:");
         }
 
