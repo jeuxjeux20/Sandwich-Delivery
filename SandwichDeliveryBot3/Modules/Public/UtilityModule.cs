@@ -8,16 +8,19 @@ using System.Runtime.InteropServices;
 using System.Diagnostics;
 using SandwichDeliveryBot.SService;
 using SandwichDeliveryBot3.Precons;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SandwichDeliveryBot.UtilityMod
 {
     public class UtiltyModule : ModuleBase
-    { 
-        SandwichService SS;
-        public UtiltyModule(SandwichService s)
+    {
+        SandwichService _SS;
+
+        public UtiltyModule(IServiceProvider provider)
         {
-            SS = s;
+            _SS = provider.GetService<SandwichService>();
         }
+
 
         [Command("invite")]
         [Summary("Returns the OAuth2 Invite URL of the bot")]
@@ -31,9 +34,9 @@ namespace SandwichDeliveryBot.UtilityMod
         [Command("updateinfo")]
         public async Task Update()
         {
-            await ReplyAsync(SS.version);
-            await ReplyAsync(SS.updatename);
-            await ReplyAsync(SS.date);
+            await ReplyAsync(_SS.version);
+            await ReplyAsync(_SS.updatename);
+            await ReplyAsync(_SS.date);
         }
 
 
@@ -55,10 +58,10 @@ namespace SandwichDeliveryBot.UtilityMod
                 $"- Library: Discord.Net ({DiscordConfig.Version})\n" +
                 $"- Runtime: {RuntimeInformation.FrameworkDescription} {RuntimeInformation.OSArchitecture}\n" +
                 $"- Uptime: {GetUptime()}\n\n" +
-                $"- Total Order Count: {SS.totalOrders}\n" +
-                $"- Bot Version: {SS.version}\n" +
-                $"- Update: {SS.updatename}\n\n" +
-                $"- Update Date: {SS.date}\n" +
+                $"- Total Order Count: {_SS.totalOrders}\n" +
+                $"- Bot Version: {_SS.version}\n" +
+                $"- Update: {_SS.updatename}\n\n" +
+                $"- Update Date: {_SS.date}\n" +
 
                 $"{Format.Bold("Stats")}\n" +
                 $"- Heap Size: {GetHeapSize()} MB\n" +
