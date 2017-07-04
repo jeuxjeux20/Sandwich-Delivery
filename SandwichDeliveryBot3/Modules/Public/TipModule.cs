@@ -51,7 +51,6 @@ namespace SandwichDeliveryBot.UtilityMod
             Artist rec = await _ADB.FindArtist(user.Id);
             if (rec == null) { await ReplyAsync("You can only tip Sandwich Artists."); return; }
             await _TDB.NewTip(Context.User.Username + "#" + Context.User.Discriminator, user.Username + "#" + user.Discriminator);
-            SandwichUser u = await _UDB.FindUser(Context.User.Id);
             await _UDB.ChangeTips(u, await _UDB.FindUser(user.Id));
             await log.SendMessageAsync($"**{Context.User.Username}#{Context.User.Discriminator}** has tipped **{user.Username}#{user.Discriminator}**.");
             await ReplyAsync($"Thank you for tipping, you now have **{u.Tips}** tips left. For information on earning tips, type `;tipinfo`.");
