@@ -7,13 +7,14 @@ namespace SandwichDeliveryBot.SService
     public class SandwichService
     {
         public int totalOrders = 0;
-        public string version = "3.0.1";
-        public string date = "June 23rd 2017";
-        public string updatename = "Fixed minor 3.0 bugs.";
+        public string version = "3.1.2";
+        public string date = "July 4th, 2017";
+        public string updatename = "New user profile system.";
         public string motd;
         public ulong USRGuildId = 264222431172886529;
         public ulong KitchenId = 285529162511286282;
         public ulong LogId = 287990510428225537;
+        public ulong TipId = 331646743039180801;
 
 
 
@@ -25,7 +26,6 @@ namespace SandwichDeliveryBot.SService
                 using (var sw = new StreamWriter(@"data/ordercount.json", false))
                 {
                     JsonSerializer.Create().Serialize(sw, totalOrders);
-                    Console.WriteLine("serialized order count");
                 }
             }
             catch (Exception e)
@@ -43,14 +43,12 @@ namespace SandwichDeliveryBot.SService
                 {
                     var myLovelyReader = new JsonTextReader(sr);
                     totalOrders = JsonSerializer.Create().Deserialize<int>(myLovelyReader);
-                    Console.WriteLine("Deserialized number of total orders.");
                     Console.WriteLine(totalOrders);
                 }
                 using (var sr = new StreamReader(@"data/motd.json"))
                 {
                     var myLovelyReader = new JsonTextReader(sr);
                     motd = JsonSerializer.Create().Deserialize<string>(myLovelyReader);
-                    Console.WriteLine("Deserialized motd.");
                     Console.WriteLine(motd);
                 }
             }
