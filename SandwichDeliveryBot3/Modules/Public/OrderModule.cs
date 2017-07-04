@@ -9,6 +9,7 @@ using SandwichDeliveryBot.OrderStatusEnum;
 using SandwichDeliveryBot3.Precons;
 using SandwichDeliveryBot3.CustomClasses;
 using SandwichDeliveryBot3.Enums;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace SandwichDeliveryBot3.Modules.Public
 {
@@ -17,12 +18,16 @@ namespace SandwichDeliveryBot3.Modules.Public
         SandwichService _SS;
         SandwichDatabase _DB;
         ArtistDatabase _ADB;
+        ListingDatabase _LDB;
+        UserDatabase _UDB;
 
-        public OrderModule(SandwichService ss, SandwichDatabase sdb, ArtistDatabase adb)
+        public OrderModule(IServiceProvider provider)
         {
-            _SS = ss;
-            _DB = sdb;
-            _ADB = adb;
+            _SS = provider.GetService<SandwichService>();
+            _DB = provider.GetService<SandwichDatabase>();
+            _ADB = provider.GetService<ArtistDatabase>();
+            _LDB = provider.GetService<ListingDatabase>();
+            _UDB = provider.GetService<UserDatabase>();
         }
 
         [Command("getallorders")]
@@ -40,10 +45,8 @@ namespace SandwichDeliveryBot3.Modules.Public
         [RequireBotPermission(GuildPermission.CreateInstantInvite)]
         public async Task Order([Remainder]string order)
         {
-            Console.WriteLine("hi");
             using (Context.Channel.EnterTypingState())
             {
-                Console.WriteLine("hi");
                 if (order.Length > 1)
                 {
                     var outp = _DB.CheckForExistingOrders(Context.User.Id);
@@ -179,7 +182,7 @@ namespace SandwichDeliveryBot3.Modules.Public
                     builder.Title = $"Your order has been accepted by {Context.User.Username}#{Context.User.Discriminator}!";
                     var desc = $"```{o.Desc}```\n" +
                                $"Id: `{o.Id}`\n" +
-                               $"**Watch this chat for an updates on when it is on it's way! It is ready for delivery!";
+                               $"Watch this chat for an updates on when it is on it's way! It is ready for delivery!";
                     builder.Description = desc;
                     builder.Color = new Color(36, 78, 145);
                     builder.Url = new Uri("https://discord.gg/XgeZfE2");
@@ -218,16 +221,18 @@ namespace SandwichDeliveryBot3.Modules.Public
                     if (o.Status == OrderStatus.ReadyToDeliver)
                     {
                         Artist a = await _ADB.FindArtist(Context.User.Id);
-
+                        //Collect variables
                         await ReplyAsync($"{Context.User.Mention} DMing you an invite! Go deliver it! Remember to be nice and ask for `;feedback`.");
                         IGuild s = await Context.Client.GetGuildAsync(o.GuildId);
+                        SandwichUser user = await _UDB.FindUser(o.UserId);
+                        await _UDB.UpOrders(user.Id);
                         ITextChannel ch = await s.GetTextChannelAsync(o.ChannelId);
                         IGuildUser u = await s.GetUserAsync(o.UserId);
                         IDMChannel dm = await u.GetOrCreateDMChannelAsync();
-
+                        //Create Invite
                         IInvite inv = await ch.CreateInviteAsync(0, 1, false, true);
                         IDMChannel artistdm = await Context.User.GetOrCreateDMChannelAsync();
-
+                        //Build embed
                         var builder = new EmbedBuilder();
                         builder.ThumbnailUrl = new Uri(o.AvatarUrl);
                         builder.Title = $"Your order is being delivered by {Context.User.Username}#{Context.User.Discriminator}!";
@@ -242,12 +247,12 @@ namespace SandwichDeliveryBot3.Modules.Public
                         });
                         builder.Timestamp = DateTime.UtcNow;
                         await dm.SendMessageAsync($"Your sandwich is being delivered soon! Watch out!", embed: builder);
-
-                        await artistdm.SendMessageAsync("Invite: " + inv.ToString());
+                        //Finish up
+                        await artistdm.SendMessageAsync("Invite: " + inv.ToString() +" \r\n Name: "+o.UserName);
                         o.Status = OrderStatus.Delivered;
+                        await _ADB.UpdateMostRecentOrder(a);
+                        await _UDB.UpdateRank(user);
                         await _DB.DelOrder(id);
-
-                        await _ADB.ChangeDeliverCount(a, ArtistStatChange.Increase);
                         //await e.Channel.SendMessage("The Order has been completed and removed from the system. You cannot go back now!");
 
                     }
@@ -282,6 +287,9 @@ namespace SandwichDeliveryBot3.Modules.Public
                 IDMChannel dm = await u.GetOrCreateDMChannelAsync();
                 Artist a = await _ADB.FindArtist(Context.User.Id);
                 await _ADB.ChangeAcceptCount(a, ArtistStatChange.Decrease);
+                await _ADB.ChangeDenyCount(a);
+                SandwichUser user = await _UDB.FindUser(order.UserId);
+                await _UDB.UpDenials(user.Id);
                 await dm.SendMessageAsync($"Your sandwich order has been denied! ", embed: new EmbedBuilder()
                     .WithThumbnailUrl(new Uri(Context.User.GetAvatarUrl()))
                     .WithUrl(new Uri("https://discord.gg/XgeZfE2"))
