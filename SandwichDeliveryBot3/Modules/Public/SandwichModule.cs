@@ -6,6 +6,7 @@ using SandwichDeliveryBot.SService;
 using SandwichDeliveryBot3.Precons;
 using SandwichDeliveryBot.Databases;
 using SandwichDeliveryBot3.CustomClasses;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace SandwichDeliveryBot3.SandwichMod
@@ -16,13 +17,15 @@ namespace SandwichDeliveryBot3.SandwichMod
         SandwichDatabase _DB;
         ArtistDatabase _ADB;
         ListingDatabase _LDB;
+        UserDatabase _UDB;
 
-        public SandwichModule(SandwichService ss, SandwichDatabase sdb, ArtistDatabase adb, ListingDatabase ldb)
+        public SandwichModule(IServiceProvider provider)
         {
-            _SS = ss;
-            _DB = sdb;
-            _ADB = adb;
-            _LDB = ldb;
+            _SS = provider.GetService<SandwichService>();
+            _DB = provider.GetService<SandwichDatabase>();
+            _ADB = provider.GetService<ArtistDatabase>();
+            _LDB = provider.GetService<ListingDatabase>();
+            _UDB = provider.GetService<UserDatabase>();
         }
 
         
@@ -192,7 +195,6 @@ namespace SandwichDeliveryBot3.SandwichMod
                 await ReplyAsync(":thumbsup:");
             }
         }
-
 
         [Command("unblacklist")]
         [Alias("ub")]
