@@ -45,7 +45,11 @@ namespace SandwichDeliveryBot.UtilityMod
             IUser userr = user as IUser;
             IGuild USR = await Context.Client.GetGuildAsync(_SS.USRGuildId);
             ITextChannel log = await USR.GetTextChannelAsync(_SS.TipId);
+            SandwichUser u = await _UDB.FindUser(Context.User.Id);
+            if (u.Tips <= 0) { await ReplyAsync("You have no more tips left! You earn more tips by leveling up(check level with `;userinfo`)."); return; }
             if (userr == Context.User) { await ReplyAsync("You can't tip yourself. That is cheating!"); await log.SendMessageAsync($"**{Context.User.Username}#{Context.User.Discriminator}** just tried to tip themselves...");  return; }
+            Artist rec = await _ADB.FindArtist(user.Id);
+            if (rec == null) { await ReplyAsync("You can only tip Sandwich Artists."); return; }
             await _TDB.NewTip(Context.User.Username + "#" + Context.User.Discriminator, user.Username + "#" + user.Discriminator);
             SandwichUser u = await _UDB.FindUser(Context.User.Id);
             await _UDB.ChangeTips(u, await _UDB.FindUser(user.Id));
