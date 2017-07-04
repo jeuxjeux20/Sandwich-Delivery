@@ -9,13 +9,13 @@ namespace SandwichDeliveryBot3.Precons
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     class RequireSandwichArtist : PreconditionAttribute
     {
-        public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IDependencyMap map)
+        public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider provider)
         {
             var user = context.User as SocketGuildUser;
             if (user == null)
                 return Task.FromResult(PreconditionResult.FromError("The command was not used in a guild."));
 
-            string[] roleNames = { "sandwich artists", "master sandwich artist", "god sandwich artist", "admin" };
+            string[] roleNames = { "standard sandwich artists", "admin" };
 
             var matchingRoles = context.Guild.Roles.Where(role => roleNames.Any(name => name == role.Name.ToLower()));
 
