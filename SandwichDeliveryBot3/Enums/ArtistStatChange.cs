@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace SandwichDeliveryBot3.Enums
 {
+    //Remove
     public enum ArtistStatChange
     {
         Increase,
