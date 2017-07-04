@@ -118,6 +118,7 @@ namespace SandwichDeliveryBot.Databases
                         await SaveChangesAsync();
                         break;
                     default:
+                        await SaveChangesAsync();
                         break;
                 }
             }
@@ -126,6 +127,21 @@ namespace SandwichDeliveryBot.Databases
                 throw new CantFindInDatabaseException();
             }
         }
+
+        public async Task EditListing(ulong id, string n)
+        {
+            Listing list = await Listings.FirstOrDefaultAsync(x => x.ID == id);
+            list.Name = n;
+            await SaveChangesAsync();
+        }
+
+        public async Task EditListing(ulong id, int num)
+        {
+            Listing list = await Listings.FirstOrDefaultAsync(x => x.ID == id);
+            list.Case = num;
+            await SaveChangesAsync();
+        }
+
 
         public async Task<string> CheckForBlacklist(ulong id) {
             Listing l = await Listings.FirstOrDefaultAsync(x => x.ID == id);
