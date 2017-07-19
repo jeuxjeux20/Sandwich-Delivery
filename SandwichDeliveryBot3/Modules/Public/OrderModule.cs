@@ -1,4 +1,4 @@
-﻿using Discord.Commands;
+using Discord.Commands;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -423,8 +423,8 @@ namespace SandwichDeliveryBot3.Modules.Public
                     IGuild usr = await Context.Client.GetGuildAsync(_SS.USRGuildId);
                     ITextChannel usrc = await usr.GetTextChannelAsync(306941357795311617);
 
-                    var builder = new EmbedBuilder();
-                    builder.ThumbnailUrl = new Uri(Context.User.GetAvatarUrl());
+                    var builder = new EmbedBuilder();                    
+                    builder.ThumbnailUrl = new Uri(Context.User.GetAvatarUrl() ?? new Uri("http://www.mamul.am/images/avatars/user-unknown-icon.jpg"));                                   
                     builder.Title = $"New feedback from {Context.User.Username}#{Context.User.Discriminator}(`{Context.User.Id}`)";
                     var desc = $"{f}";
                     builder.Description = desc;
