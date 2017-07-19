@@ -33,9 +33,7 @@ namespace SandwichDeliveryBot
             // Define the DiscordSocketClient
             client = new DiscordSocketClient();
 
-
             var token = "angery"; 
-
 
             client.Log += async (message) =>
             {
